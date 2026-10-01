@@ -23,7 +23,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang={SITE.lang}>
+    <html lang={SITE.lang} data-scroll-behavior="smooth">
       <body>
         <a className="hvh-skip-link" href="#tartalom">
           Ugrás a tartalomra

@@ -14,3 +14,5 @@ export function proxy(request: NextRequest) {
 export const config = {
   matcher: ["/munka", "/munka/:path*"],
 };
+
+export default proxy;

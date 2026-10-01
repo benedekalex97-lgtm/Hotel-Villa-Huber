@@ -39,6 +39,14 @@ describe("belső route-gate", () => {
       expect(nextConfig(PHASE_DEVELOPMENT_SERVER).pageExtensions).toContain("internal.tsx");
       process.env.HVH_INTERNAL_TOOLS = "1";
       expect(nextConfig(PHASE_PRODUCTION_BUILD).pageExtensions).toContain("internal.tsx");
+      delete process.env.HVH_INTERNAL_TOOLS;
+      // Statikus export (GitHub Pages): se belső oldal, se szerveres fájl (proxy, API).
+      process.env.HVH_STATIC_EXPORT = "1";
+      const exported = nextConfig(PHASE_PRODUCTION_BUILD);
+      expect(exported.output).toBe("export");
+      expect(exported.pageExtensions).not.toContain("internal.tsx");
+      expect(exported.pageExtensions).not.toContain("server.ts");
+      delete process.env.HVH_STATIC_EXPORT;
     } finally {
       if (saved === undefined) delete process.env.HVH_INTERNAL_TOOLS;
       else process.env.HVH_INTERNAL_TOOLS = saved;

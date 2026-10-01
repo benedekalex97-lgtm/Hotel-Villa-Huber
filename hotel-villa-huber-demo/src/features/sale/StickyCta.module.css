@@ -1,0 +1,31 @@
+.bar {
+  position: fixed;
+  inset: auto 0 0 0;
+  z-index: 40;
+  display: none;
+  padding: var(--hvh-space-3) var(--hvh-gutter) calc(var(--hvh-space-3) + env(safe-area-inset-bottom, 0px));
+  background: color-mix(in srgb, var(--hvh-paper) 96%, transparent);
+  border-top: 1px solid var(--hvh-line);
+  box-shadow: 0 -6px 20px -10px rgb(30 34 31 / 0.25);
+  transition: transform var(--hvh-dur) var(--hvh-ease), visibility 0s linear;
+}
+.bar[data-visible="false"] {
+  transform: translateY(100%);
+  visibility: hidden;
+  transition: transform var(--hvh-dur) var(--hvh-ease), visibility 0s linear var(--hvh-dur);
+}
+.button {
+  width: 100%;
+  min-height: 3rem;
+  text-align: center;
+}
+
+@media (max-width: 767px) {
+  .bar {
+    display: block;
+  }
+  /* A tabulátorral fókuszált elem ne kerüljön a sáv alá. */
+  :global(html):has(.bar) {
+    scroll-padding-bottom: 5.5rem;
+  }
+}

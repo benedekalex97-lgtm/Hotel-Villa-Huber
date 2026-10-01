@@ -13,11 +13,16 @@ describe("tartalommodell", () => {
     for (const f of [...PUBLIC_FACTS, ...INTERNAL_FACTS]) expect(SOURCES[f.source]).toBeDefined();
   });
 
-  it("a nem igazolt kapacitás- és áradatok nem publikusak", () => {
-    const ids = PUBLIC_FACTS.map((f) => f.id as string);
-    for (const id of ["rooms", "beds", "restaurant", "parking", "asking-price", "yield", "build-year"]) {
-      expect(ids).not.toContain(id);
+  it("a kapacitásadatok nem szerepelnek megerősítettként; ár, hozam, méret, építési év nem publikus", () => {
+    const byId = new Map(PUBLIC_FACTS.map((f) => [f.id as string, f]));
+    for (const id of ["rooms", "beds", "restaurant", "parking", "wellness", "category", "renovation"]) {
+      expect(byId.get(id)?.status).toBe("nyilvanos-megerositendo");
     }
+    expect(byId.get("operated-summer-2026")?.status).toBe("tulajdonosi-kozles");
+    expect(byId.get("asking-price")?.value).toBe("Irányár és értékesítési feltételek egyeztetés alapján.");
+    for (const id of ["yield", "build-year", "floor-area", "plot-area", "price-history"]) expect(byId.has(id)).toBe(false);
+    const publicText = JSON.stringify(PUBLIC_FACTS.map((f) => f.value));
+    expect(publicText).not.toMatch(/€|EUR|millió|990|m²/);
   });
 
   it("asset-manifest: kizárt képek nincsenek, minden elem teljes és létező fájlra mutat", () => {
@@ -31,7 +36,7 @@ describe("tartalommodell", () => {
       expect(existsSync(join(__dirname, "../../public", m.src))).toBe(true);
     }
     expect(GALLERY.length).toBeGreaterThanOrEqual(6);
-    expect(GALLERY.length).toBeLessThanOrEqual(8);
+    expect(GALLERY.length).toBeLessThanOrEqual(12);
     for (const id of Object.values(MEDIA_SLOTS)) if (id) expect(MEDIA[id]).toBeDefined();
   });
 });

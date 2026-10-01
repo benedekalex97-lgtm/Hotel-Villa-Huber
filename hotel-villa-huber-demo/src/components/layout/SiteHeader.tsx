@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useId, useRef, useState } from "react";
-import { MAIN_NAV, ROUTES } from "@/content/site";
+import { MAIN_NAV, NAV_EMPHASIS, ROUTES } from "@/content/site";
 import { Wordmark } from "@/components/brand/Wordmark";
 import styles from "./SiteHeader.module.css";
 
@@ -29,7 +29,7 @@ export function SiteHeader() {
       }
     };
     const onResize = () => {
-      if (window.matchMedia("(min-width: 960px)").matches) setOpen(false);
+      if (window.matchMedia("(min-width: 1240px)").matches) setOpen(false);
     };
     document.addEventListener("keydown", onKey);
     window.addEventListener("resize", onResize);
@@ -41,11 +41,11 @@ export function SiteHeader() {
 
   const renderItems = (onNavigate?: () => void) =>
     MAIN_NAV.map((item) => {
-      const isSale = item.href === ROUTES.sale;
-      const current = isSale && pathname === ROUTES.sale ? "page" : undefined;
+      const emphasized = NAV_EMPHASIS.includes(item.href);
+      const current = !item.href.includes("#") && pathname === item.href ? "page" : undefined;
       return (
         <li key={item.href}>
-          <Link href={item.href} className={isSale ? styles.saleLink : styles.link} aria-current={current} onClick={onNavigate}>
+          <Link href={item.href} className={emphasized ? styles.saleLink : styles.link} aria-current={current} onClick={onNavigate}>
             {item.label}
           </Link>
         </li>

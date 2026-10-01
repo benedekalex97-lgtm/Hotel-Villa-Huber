@@ -42,7 +42,8 @@
   display: inline-flex;
   align-items: center;
   min-height: 2.75rem;
-  padding: 0 0.75rem;
+  padding: 0 0.625rem;
+  white-space: nowrap;
   border-radius: var(--hvh-radius);
   color: var(--hvh-ink);
   font-size: var(--hvh-fs-small);
@@ -135,7 +136,7 @@
   margin-left: 0;
 }
 
-@media (min-width: 960px) {
+@media (min-width: 1240px) {
   .nav { display: block; }
   .toggle,
   .panel { display: none !important; }

@@ -3,80 +3,61 @@ import type { Fact } from "../types";
 /**
  * BELSŐ adatnyilvántartás — nem publikus és ismeretlen adatok.
  * Publikus kód nem importálhatja (teszt és verify:public ellenőrzi).
- * A régi nyilvános kapacitásadatok tulajdonosi megerősítésig nem jelennek meg.
  */
 export const INTERNAL_FACTS = [
-  // — Tulajdonosi közlés, nem megjelenített —
   {
-    id: "operated-summer-2026",
-    label: "Működés 2026 nyarán",
-    value: "A tulajdonos közlése szerint a hotel 2026 nyarán működött.",
-    status: "tulajdonosi-kozles",
-    source: "SRC-OWNER-VERBAL",
-    visibility: "internal",
-    note: "Nem bizonyítja a jelenlegi nyitvatartást, foglalhatóságot vagy teljes éves működést.",
-  },
-  {
-    id: "operator",
-    label: "Üzemeltetői partner",
-    value: "Nincs igazolt, leszerződött üzemeltető.",
-    status: "jovahagyott",
-    source: "SRC-STRATEGIA-V1",
-    visibility: "internal",
-    note: "Meglévő megállapodást csak akkor mutatunk be, ha valóban létrejött.",
-  },
-
-  // — Régi nyilvános közlések, tulajdonosi megerősítés nélkül —
-  {
-    id: "rooms",
-    label: "Szobák száma",
-    value: "14",
+    id: "price-history",
+    label: "Korábbi nyilvános kínálati árak",
+    value: "1,2 millió EUR (korábbi adat); közvetítői hirdetésekben 1,25 millió EUR, majd 990 000 EUR",
     status: "nyilvanos-megerositendo",
-    source: "SRC-PUBLIC-LEGACY",
-    visibility: "internal",
-  },
-  {
-    id: "beds",
-    label: "Férőhely",
-    value: "kb. 45",
-    status: "nyilvanos-megerositendo",
-    source: "SRC-PUBLIC-LEGACY",
-    visibility: "internal",
-  },
-  {
-    id: "restaurant",
-    label: "Étterem",
-    value: "50 fős",
-    status: "nyilvanos-megerositendo",
-    source: "SRC-PUBLIC-LEGACY",
-    visibility: "internal",
-  },
-  {
-    id: "wellness",
-    label: "Wellness",
-    value: "Wellness-rész (szauna a fotókon látható)",
-    status: "nyilvanos-megerositendo",
-    source: "SRC-PUBLIC-LEGACY",
-    visibility: "internal",
-  },
-  {
-    id: "parking",
-    label: "Parkoló",
-    value: "kb. 35 autó, buszparkolás",
-    status: "nyilvanos-megerositendo",
-    source: "SRC-PUBLIC-LEGACY",
-    visibility: "internal",
-  },
-
-  // — Ismeretlen / nem jóváhagyott, sehol nem jelenik meg —
-  {
-    id: "asking-price",
-    label: "Irányár",
-    value: null,
-    status: "ismeretlen",
-    source: "SRC-BRIEF-0930",
+    source: "SRC-BROKER",
     visibility: "hidden",
-    note: "A korábbi 1,2 millió EUR (és nyilvános hirdetésekben 1,25 millió EUR) nem jóváhagyott aktuális ár.",
+    note: "F-040–F-044. Nem jóváhagyott aktuális irányár; nem publikálható (D-003).",
+  },
+  {
+    id: "floor-area",
+    label: "Beépített terület",
+    value: "„over 2,000 m²”",
+    status: "nyilvanos-megerositendo",
+    source: "SRC-BROKER",
+    visibility: "internal",
+    note: "F-015: egyetlen közvetítő háromszor ismételt állítása; alaprajz kell.",
+  },
+  {
+    id: "plot-area",
+    label: "Telekméret",
+    value: "5 000 m²",
+    status: "nyilvanos-megerositendo",
+    source: "SRC-BROKER",
+    visibility: "internal",
+    note: "F-016: egyetlen hirdetés; tulajdoni lap kell.",
+  },
+  {
+    id: "build-year",
+    label: "Építési év",
+    value: "Ellentmondó: 1830 / 1900 / 1911-es átépítés",
+    status: "ismeretlen",
+    source: "SRC-HVH-WEB",
+    visibility: "internal",
+    note: "F-010–F-012 ütköznek; a publikus oldalon egyeztetési témaként szerepel, szám nélkül.",
+  },
+  {
+    id: "legal-operator",
+    label: "Üzemeltető jogi név",
+    value: "Gasthof Borok OG (kontaktoldal)",
+    status: "nyilvanos-megerositendo",
+    source: "SRC-HVH-WEB",
+    visibility: "internal",
+    note: "F-003; cégnyilvántartási ellenőrzés szükséges.",
+  },
+  {
+    id: "broker",
+    label: "Külső közvetítő",
+    value: "Nem kizárólagos, általános megbízású közvetítő hirdeti",
+    status: "nyilvanos-megerositendo",
+    source: "SRC-BROKER",
+    visibility: "internal",
+    note: "F-042, F-045; jogosultság tisztázandó (R-01).",
   },
   {
     id: "yield",
@@ -93,6 +74,7 @@ export const INTERNAL_FACTS = [
     status: "ismeretlen",
     source: "SRC-BRIEF-0930",
     visibility: "hidden",
+    note: "A közvetítő „excellent condition” állítása műszaki dokumentum nélkül nem vehető át (F-046).",
   },
   {
     id: "renovation-cost",
@@ -105,14 +87,6 @@ export const INTERNAL_FACTS = [
   {
     id: "permits",
     label: "Magánhasználati vagy átalakítási engedély",
-    value: null,
-    status: "ismeretlen",
-    source: "SRC-BRIEF-0930",
-    visibility: "hidden",
-  },
-  {
-    id: "build-year",
-    label: "Építési év",
     value: null,
     status: "ismeretlen",
     source: "SRC-BRIEF-0930",

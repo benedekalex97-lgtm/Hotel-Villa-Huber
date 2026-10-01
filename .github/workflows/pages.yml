@@ -1,0 +1,67 @@
+name: Production — GitHub Pages
+
+# A Hotel Villa Huber nyilvános kiadása: /, /foglalas, /elado-hotel (statikus export).
+# A belső /munka/* felület és az API ebben a kiadásban nem épül be.
+on:
+  push:
+    branches: ["claude/hotel-villa-huber-demo-qqrcvp"]
+    paths: ["hotel-villa-huber-demo/**", ".github/workflows/pages.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+defaults:
+  run:
+    working-directory: hotel-villa-huber-demo
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      HVH_BASE_PATH: /${{ github.event.repository.name }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: hotel-villa-huber-demo/package-lock.json
+      - run: npm ci
+      - name: Típusellenőrzés, lint, egységtesztek
+        run: |
+          npm run typecheck
+          npm run lint
+          npm test
+      - name: Statikus production build és szivárgásellenőrzés
+        run: |
+          npm run build:pages
+          npm run verify:pages
+      - name: E2E a statikus kiadáson (Pages-szerű kiszolgálóval)
+        run: |
+          npx playwright install --with-deps chromium
+          node scripts/serve-static.mjs 3200 "$HVH_BASE_PATH" out &
+          sleep 1
+          E2E_BASE_URL="http://localhost:3200$HVH_BASE_PATH/" E2E_STATIC=1 npx playwright test
+      - uses: actions/configure-pages@v5
+        with:
+          enablement: true
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: hotel-villa-huber-demo/out
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

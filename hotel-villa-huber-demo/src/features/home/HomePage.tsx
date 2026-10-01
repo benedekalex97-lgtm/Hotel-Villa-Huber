@@ -1,200 +1,274 @@
 import Link from "next/link";
 import { MediaImage } from "@/components/media/MediaImage";
-import { getSlot, getMedia, GALLERY } from "@/content/media";
-import { PROPERTY, publicValue } from "@/content/property";
-import { PURCHASE_PATHS } from "@/content/sales";
+import { BookingWidget } from "@/features/booking/BookingWidget";
+import { ACCOMMODATION, AREA_HIGHLIGHTS, GUEST_CONTACT, GUEST_INTRO, GUEST_SERVICES } from "@/content/guest";
+import { GALLERY, getMedia, getSlot } from "@/content/media";
+import { FACT_STATUS_PUBLIC_LABEL, PROPERTY, publicFactView } from "@/content/property";
 import { CONTACT, HOME_SECTIONS, ROUTES } from "@/content/site";
 import { Gallery } from "./Gallery";
 import styles from "./HomePage.module.css";
 
 const MAP_URL = "https://www.openstreetmap.org/search?query=Afritz%20am%20See";
 
-/** A „fotókon látható terek” tény vesszős felsorolásból lista. */
-function visibleSpaces(): string[] {
-  return publicValue("spaces")
-    .split(",")
-    .map((part) => part.trim())
-    .filter(Boolean)
-    .map((part) => part.charAt(0).toUpperCase() + part.slice(1));
+interface SectionHeadProps {
+  id: string;
+  eyebrow: string;
+  title: string;
+  lead?: string;
+}
+
+function SectionHead({ id, eyebrow, title, lead }: SectionHeadProps) {
+  return (
+    <div className={styles.head}>
+      <p className="hvh-eyebrow">{eyebrow}</p>
+      <h2 id={id}>{title}</h2>
+      {lead ? <p className="hvh-lead">{lead}</p> : null}
+    </div>
+  );
+}
+
+/** Telefonszám → tel: hivatkozás (csak számjegyek és vezető +). */
+function telHref(phone: string): string {
+  return `tel:${phone.replace(/(?!^\+)[^\d]/g, "")}`;
 }
 
 export function HomePage() {
-  const heroImage = getSlot("home.hero");
-  const villaImage = getSlot("home.villa");
-  const locationImage = getSlot("home.location");
-  const teaserImage = getSlot("home.saleTeaser");
-  const galleryItems = GALLERY.map((id) => getMedia(id));
-  const spaces = visibleSpaces();
+  const hero = getSlot("home.hero");
+  const villa = getSlot("home.villa");
+  const location = getSlot("home.location");
+  const rooms = publicFactView("rooms");
+  const roomFeatures = publicFactView("room-features");
+  const lake = publicFactView("lake-distance");
+  const address = publicFactView("address");
+  const hasGuestContact = Boolean(GUEST_CONTACT.email || GUEST_CONTACT.phone);
 
   return (
     <>
-      {/* 1. Hero */}
+      {/* 1. Hero — keretezett, osztott elrendezés: a kép nem lépi túl a natív ~1024 px szélességet. */}
       <section className={styles.hero} aria-labelledby="hero-title">
         <div className={`hvh-container ${styles.heroGrid}`}>
           <div className={styles.heroText}>
             <h1 id="hero-title" className={styles.heroTitle}>
               {PROPERTY.name}
             </h1>
-            <p className={styles.tagline}>{PROPERTY.tagline}</p>
-            <p className="hvh-lead">
-              Villa-hotel {PROPERTY.locality} településen, Karintiában (Ausztria).
-            </p>
+            <p className={styles.place}>{PROPERTY.placeLine}</p>
+            <p className="hvh-lead">{PROPERTY.tagline}</p>
             <div className={styles.actions}>
-              <Link href={ROUTES.sale} className="hvh-btn">
-                Értékesítési bemutató
-              </Link>
-              <a href={`#${HOME_SECTIONS.gallery}`} className="hvh-btn hvh-btn--secondary">
-                Megnézem a galériát
+              <a href={`#${HOME_SECTIONS.booking}`} className="hvh-btn">
+                Foglalási lehetőségek
+              </a>
+              <a href={`#${HOME_SECTIONS.rooms}`} className="hvh-btn hvh-btn--secondary">
+                Szobák
               </a>
             </div>
           </div>
-          <MediaImage
-            asset={heroImage}
-            ratio="hero"
-            priority
-            sizes="(min-width: 1024px) 700px, calc(100vw - 2rem)"
-            className={styles.heroImage}
-          />
-        </div>
-      </section>
-
-      {/* 2. A villa */}
-      <section id={HOME_SECTIONS.villa} className={`${styles.section} ${styles.deep}`} aria-labelledby="villa-title">
-        <div className={`hvh-container ${styles.split} ${styles.imageFirst}`}>
-          <div className={styles.splitText}>
-            <p className="hvh-eyebrow">A villa</p>
-            <h2 id="villa-title">Villa-hotel Karintiában</h2>
-            <div className="hvh-prose">
-              <p>
-                A {PROPERTY.name} karintiai villa-hotel, {PROPERTY.locality} településen. A fotókon a ház sárga
-                homlokzata látható saroktoronnyal és virágos erkéllyel, a kert, valamint a völgy erdős hegyei.
-              </p>
-              <p>A képeken látható terek:</p>
-            </div>
-            <ul className={styles.spaceList}>
-              {spaces.map((space) => (
-                <li key={space}>{space}</li>
-              ))}
-            </ul>
+          <div className={styles.heroMedia}>
+            <MediaImage
+              asset={hero}
+              ratio="hero"
+              priority
+              sizes="(min-width: 960px) 680px, calc(100vw - 2rem)"
+              className={styles.heroImage}
+            />
           </div>
-          <MediaImage
-            asset={villaImage}
-            ratio="landscape"
-            withCaption
-            sizes="(min-width: 960px) 600px, calc(100vw - 2rem)"
-            className={styles.splitMedia}
-          />
         </div>
       </section>
 
-      {/* 3. Galéria */}
+      {/* 2. A hotel */}
+      <section id={HOME_SECTIONS.hotel} className={`${styles.section} ${styles.deep}`} aria-labelledby="hotel-title">
+        <div className={`hvh-container ${styles.split}`}>
+          <figure className={styles.figure}>
+            <MediaImage asset={villa} ratio="landscape" sizes="(min-width: 960px) 600px, calc(100vw - 2rem)" className={styles.photo} />
+            {villa ? <figcaption className={styles.figCaption}>{villa.caption}</figcaption> : null}
+          </figure>
+          <div className={styles.splitText}>
+            <p className="hvh-eyebrow">A hotel</p>
+            <h2 id="hotel-title">{GUEST_INTRO.title}</h2>
+            <div className="hvh-prose">
+              {GUEST_INTRO.paragraphs.map((paragraph) => (
+                <p key={paragraph}>{paragraph}</p>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 3. Szobák */}
+      <section id={HOME_SECTIONS.rooms} className={styles.section} aria-labelledby="szobak-title">
+        <div className="hvh-container">
+          <SectionHead
+            id="szobak-title"
+            eyebrow="Szobák"
+            title="Elhelyezés a képeken"
+            lead="Példák a ház szobáiból. A fotók néhány jellemző elhelyezést mutatnak — ezek nem hivatalos szobakategóriák."
+          />
+          <p className={styles.factLine}>
+            <span>{rooms.value}.</span>
+            <small className={styles.status}>{rooms.statusLabel}</small>
+          </p>
+          <ul className={styles.roomGrid}>
+            {ACCOMMODATION.map((item) => (
+              <li key={item.id} className={styles.card}>
+                <MediaImage asset={getMedia(item.media)} ratio="landscape" sizes="(min-width: 960px) 580px, calc(100vw - 2rem)" className={styles.cardImage} />
+                <div className={styles.cardBody}>
+                  <h3>{item.title}</h3>
+                  <p>{item.description}</p>
+                  <a href={`#${HOME_SECTIONS.booking}`} className="hvh-btn hvh-btn--secondary hvh-btn--sm">
+                    Foglalási lehetőségek<span className="hvh-visually-hidden"> — {item.title}</span>
+                  </a>
+                </div>
+              </li>
+            ))}
+          </ul>
+          <div className={`${styles.split} ${styles.bath}`}>
+            <figure className={styles.figure}>
+              <MediaImage asset={getMedia("bathroom")} ratio="landscape" sizes="(min-width: 960px) 520px, calc(100vw - 2rem)" className={styles.photo} />
+              <figcaption className={styles.figCaption}>{getMedia("bathroom").caption}</figcaption>
+            </figure>
+            <div className={styles.splitText}>
+              <h3>A szobák felszereltsége</h3>
+              <p>
+                A korábbi leírás szerint: {roomFeatures.value}.
+              </p>
+              <small className={styles.status}>{roomFeatures.statusLabel}</small>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 4. Élmények és szolgáltatások */}
+      <section id={HOME_SECTIONS.services} className={`${styles.section} ${styles.deep}`} aria-labelledby="szolgaltatasok-title">
+        <div className="hvh-container">
+          <SectionHead
+            id="szolgaltatasok-title"
+            eyebrow="Élmények és szolgáltatások"
+            title="Közösségi terek és szolgáltatások"
+            lead="A fotókon látható terek és a korábbi leírásokban szereplő szolgáltatások. Az aktuális működést és nyitvatartást ez az oldal nem tartalmazza."
+          />
+          <ul className={styles.serviceGrid}>
+            {GUEST_SERVICES.map((service) => (
+              <li key={service.id} className={styles.card}>
+                <MediaImage
+                  asset={service.media ? getMedia(service.media) : null}
+                  ratio="landscape"
+                  sizes="(min-width: 960px) 580px, (min-width: 640px) 45vw, calc(100vw - 2rem)"
+                  className={styles.cardImage}
+                />
+                <div className={styles.cardBody}>
+                  <h3>{service.title}</h3>
+                  <p>{service.description}</p>
+                  {service.status !== "jovahagyott" ? <small className={styles.status}>{FACT_STATUS_PUBLIC_LABEL[service.status]}</small> : null}
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
+      {/* 5. Galéria */}
       <section id={HOME_SECTIONS.gallery} className={styles.section} aria-labelledby="galeria-title">
         <div className="hvh-container">
-          <div className={styles.head}>
-            <p className="hvh-eyebrow">Galéria</p>
-            <h2 id="galeria-title">A ház képekben</h2>
-            <p className="hvh-lead">Válasszon egy képet a nagyobb méretű megtekintéshez.</p>
-          </div>
-          <Gallery items={galleryItems} />
+          <SectionHead id="galeria-title" eyebrow="Galéria" title="A ház képekben" lead="Válasszon egy képet a nagyobb méretű megtekintéshez." />
+          <Gallery items={GALLERY.map((id) => getMedia(id))} />
         </div>
       </section>
 
-      {/* 4. Elhelyezkedés */}
-      <section id={HOME_SECTIONS.location} className={`${styles.section} ${styles.deep}`} aria-labelledby="elhelyezkedes-title">
-        <div className={`hvh-container ${styles.split}`}>
-          <div className={styles.splitText}>
-            <p className="hvh-eyebrow">Elhelyezkedés</p>
-            <h2 id="elhelyezkedes-title">{PROPERTY.placeLineFull}</h2>
-            <div className="hvh-prose">
+      {/* 6. Környék */}
+      <section id={HOME_SECTIONS.area} className={`${styles.section} ${styles.deep}`} aria-labelledby="kornyek-title">
+        <div className="hvh-container">
+          <SectionHead id="kornyek-title" eyebrow="Környék" title="Afritz am See és a Gegendtal" />
+          <div className={styles.areaGrid}>
+            <div className={styles.areaMain}>
+              <ul className={styles.highlights}>
+                {AREA_HIGHLIGHTS.map((item) => (
+                  <li key={item.title}>
+                    <h3>{item.title}</h3>
+                    <p>{item.description}</p>
+                  </li>
+                ))}
+              </ul>
+              <div className={styles.lake}>
+                <p className={styles.lakeLabel}>{lake.label}</p>
+                <p className={styles.lakeValue}>{lake.value}</p>
+                <small className={styles.status}>{lake.statusLabel}</small>
+              </div>
               <p>
-                A villa-hotel Afritz am See településen található, Ausztria Karintia tartományában.
+                <a href={MAP_URL} target="_blank" rel="noopener noreferrer">
+                  Afritz am See megnyitása az OpenStreetMap térképen
+                </a>{" "}
+                <span className={styles.newTab}>(új lapon nyílik)</span>
               </p>
-              <p>A helyszínnel és a környékkel kapcsolatos további tudnivalókat a részletes tájékoztatás során adjuk át.</p>
             </div>
-            <dl className={styles.facts}>
-              <div>
-                <dt>Település</dt>
-                <dd>{PROPERTY.locality}</dd>
-              </div>
-              <div>
-                <dt>Tartomány</dt>
-                <dd>{PROPERTY.region}</dd>
-              </div>
-              <div>
-                <dt>Ország</dt>
-                <dd>{PROPERTY.country}</dd>
-              </div>
-            </dl>
-            <p>
-              <a href={MAP_URL} target="_blank" rel="noopener noreferrer">
-                Afritz am See megnyitása az OpenStreetMap térképen
-              </a>{" "}
-              <span className={styles.newTab}>(új lapon nyílik meg)</span>
-            </p>
+            <figure className={styles.areaFigure}>
+              <MediaImage asset={location} ratio="native" sizes="(min-width: 960px) 480px, calc(100vw - 2rem)" className={styles.photo} />
+              <figcaption className={styles.figCaption}>Afritz am See helységnévtáblája az út mentén</figcaption>
+            </figure>
           </div>
-          <figure className={`${styles.splitMedia} ${styles.locationFigure}`}>
-            <MediaImage
-              asset={locationImage}
-              ratio="landscape"
-              sizes="(min-width: 960px) 520px, calc(100vw - 2rem)"
-            />
-            <figcaption className={styles.figCaption}>
-              {locationImage ? `${locationImage.caption} — a fotó a helységnévtáblát mutatja.` : null}
-            </figcaption>
-          </figure>
         </div>
       </section>
 
-      {/* 5. Értékesítési átvezetés */}
-      <section id={HOME_SECTIONS.sale} className={`hvh-surface-dark ${styles.band}`} aria-labelledby="ertekesites-title">
-        <div className={`hvh-container ${styles.split}`}>
-          <div className={styles.splitText}>
-            <p className="hvh-eyebrow">Értékesítés</p>
-            <h2 id="ertekesites-title">A villa-hotel értékesítésre kerül</h2>
-            <p className={styles.bandText}>
-              Ajánlatunk magyar befektetőknek és szállodás vállalkozásoknak szól. Két vásárlási utat mutatunk be:
-            </p>
-            <ul className={styles.pathList}>
-              {PURCHASE_PATHS.map((path) => (
-                <li key={path.id}>{path.title}</li>
-              ))}
-            </ul>
-            <div className={styles.actions}>
-              <Link href={ROUTES.sale} className="hvh-btn hvh-btn--on-dark">
-                Értékesítési bemutató
-              </Link>
-            </div>
-          </div>
-          <MediaImage
-            asset={teaserImage}
-            ratio="landscape"
-            sizes="(min-width: 960px) 560px, calc(100vw - 2rem)"
-            className={styles.splitMedia}
+      {/* 7. Foglalás */}
+      <section id={HOME_SECTIONS.booking} className={`hvh-surface-dark ${styles.section}`} aria-labelledby="foglalas-title">
+        <div className="hvh-container">
+          <SectionHead
+            id="foglalas-title"
+            eyebrow="Foglalás"
+            title="Foglalási lehetőségek"
+            lead="Adja meg az utazás időpontját és a vendégek számát, és próbálja ki a bemutató foglalási folyamatot."
           />
+          <BookingWidget />
         </div>
       </section>
 
-      {/* 6. Kapcsolat */}
-      <section id={HOME_SECTIONS.contact} className={styles.section} aria-labelledby="kapcsolat-title">
-        <div className={`hvh-container ${styles.contact}`}>
-          <div className={styles.head}>
-            <p className="hvh-eyebrow">Kapcsolat</p>
-            <h2 id="kapcsolat-title">Értékesítési kapcsolat</h2>
-            <p className="hvh-lead">
-              Ez a cím a villa-hotel értékesítésével kapcsolatos megkeresésekre szolgál.
-            </p>
+      {/* 8. Eladó hotel — visszafogott híd az eladási tájékoztatóhoz */}
+      <section id={HOME_SECTIONS.sale} className={styles.saleBand} aria-labelledby="elado-title">
+        <div className={`hvh-container ${styles.saleInner}`}>
+          <div className={styles.saleText}>
+            <h2 id="elado-title">A hotel eladó</h2>
+            <p>A Hotel Villa Huber ingatlan jelenleg eladó. Az értékesítéssel kapcsolatos tudnivalók az eladási tájékoztatóban olvashatók.</p>
           </div>
-          <div className={styles.contactCard}>
-            <p className={styles.contactLabel}>Email</p>
-            <p>
-              <a href={CONTACT.mailtoHref} className={styles.contactMail}>
-                {CONTACT.email}
-              </a>
-            </p>
-            <p className={styles.contactNote}>
-              Szobafoglalásra ezen az oldalon nincs lehetőség. Részletes bemutatót az{" "}
-              <Link href={`${ROUTES.sale}#kapcsolatfelvetel`}>értékesítési oldalon</Link> kérhet.
-            </p>
+          <Link href={ROUTES.sale} className="hvh-btn hvh-btn--secondary">
+            Az eladási tájékoztató megnyitása
+          </Link>
+        </div>
+      </section>
+
+      {/* 9. Kapcsolat */}
+      <section id={HOME_SECTIONS.contact} className={styles.section} aria-labelledby="kapcsolat-title">
+        <div className="hvh-container">
+          <SectionHead id="kapcsolat-title" eyebrow="Kapcsolat" title="Elérhetőségek" />
+          <div className={styles.contactGrid}>
+            <div className={styles.contactCard}>
+              <h3>Vendégkapcsolat</h3>
+              {hasGuestContact ? (
+                <ul className={styles.contactList}>
+                  {GUEST_CONTACT.email ? (
+                    <li>
+                      Email: <a href={`mailto:${GUEST_CONTACT.email}`}>{GUEST_CONTACT.email}</a>
+                    </li>
+                  ) : null}
+                  {GUEST_CONTACT.phone ? (
+                    <li>
+                      Telefon: <a href={telHref(GUEST_CONTACT.phone)}>{GUEST_CONTACT.phone}</a>
+                    </li>
+                  ) : null}
+                </ul>
+              ) : (
+                <p>A vendégkapcsolati elérhetőségeket később tesszük közzé.</p>
+              )}
+              <div className={styles.address}>
+                <p className={styles.contactLabel}>Cím</p>
+                <address>{address.value}</address>
+                <small className={styles.status}>{address.statusLabel}</small>
+              </div>
+            </div>
+            <div className={styles.contactCard}>
+              <h3>Értékesítés</h3>
+              <p>
+                Az ingatlan értékesítésével kapcsolatos megkeresésekhez: <a href={CONTACT.mailtoHref}>{CONTACT.email}</a>
+              </p>
+              <p className={styles.contactNote}>Ez a cím nem szobafoglalási cím.</p>
+            </div>
           </div>
         </div>
       </section>

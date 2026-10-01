@@ -9,7 +9,7 @@ if (!existsSync(dist)) {
   process.exit(2);
 }
 
-// Belső tartalomra utaló jelek: emailsablon-szöveg, UI-feliratok, belső díjak.
+// Belső tartalomra utaló jelek: emailsablon-szöveg, UI-feliratok, belső díjak, nem publikálható ár- és közvetítői adatok.
 const FORBIDDEN = [
   "korábbi megkeresésem",
   "Ajánló neve / korábbi beszélgetésünk",
@@ -23,20 +23,17 @@ const FORBIDDEN = [
   "150000",
   "sikerdíj",
   "1,2 millió",
+  "1 200 000",
   "1.200.000",
   "1,25 millió",
-  "kb. 45",
-  "50 fős",
-  "kb. 35 autó",
-  "2026 nyarán",
-  "Nincs igazolt, leszerződött üzemeltető",
-  "1.200.000",
-  "1,25 millió",
-  "kb. 45",
-  "50 fős",
-  "kb. 35 autó",
-  "2026 nyarán",
-  "Nincs igazolt, leszerződött üzemeltető",
+  "1 250 000",
+  "990 000",
+  "990,000",
+  "Gasthof Borok",
+  "2,000 m²",
+  "5 000 m²",
+  "Klara Deak",
+  "Deák Klára",
 ];
 
 function walk(dir) {
@@ -46,9 +43,10 @@ function walk(dir) {
   });
 }
 
-// A .next/cache nem kerül kiszolgálásra; csak a szerver- és kliens-kimenetet vizsgáljuk.
-const files = ["server", "static"]
-  .map((d) => join(dist, d))
+// Statikus export (out/): minden kiszolgált fájl. Next-build: a .next/cache nem kerül kiszolgálásra,
+// csak a szerver- és kliens-kimenetet vizsgáljuk.
+const staticExport = !existsSync(join(dist, "server"));
+const files = (staticExport ? [dist] : ["server", "static"].map((d) => join(dist, d)))
   .filter(existsSync)
   .flatMap(walk)
   .filter((f) => /\.(js|html|rsc|json|txt|body|meta|css)$/.test(f) && !f.endsWith(".map"));
@@ -62,7 +60,14 @@ for (const file of files) {
 }
 
 const manifestPath = join(dist, "app-path-routes-manifest.json");
-if (existsSync(manifestPath)) {
+if (staticExport) {
+  const pages = files.filter((f) => f.endsWith(".html")).map((f) => f.slice(dist.length));
+  for (const page of pages) if (page.includes("/munka") || page.includes("/api/")) problems.push(`statikus oldal: ${page}`);
+  for (const required of ["/index.html", "/foglalas/index.html", "/elado-hotel/index.html", "/404.html"]) {
+    if (!pages.includes(required)) problems.push(`hiányzó oldal: ${required}`);
+  }
+  console.log(`Statikus oldalak: ${pages.join(", ")}`);
+} else if (existsSync(manifestPath)) {
   const routes = Object.values(JSON.parse(readFileSync(manifestPath, "utf8")));
   for (const route of routes) {
     if (String(route).startsWith("/munka")) problems.push(`route-manifest: ${route}`);

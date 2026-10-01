@@ -4,6 +4,7 @@
   min-width: 0;
 }
 .form {
+  position: relative;
   display: grid;
   gap: var(--hvh-space-5);
   padding: var(--hvh-space-5);
@@ -14,7 +15,14 @@
   box-shadow: var(--hvh-shadow-sm);
   min-width: 0;
 }
+.purpose {
+  font-size: var(--hvh-fs-small);
+  color: var(--hvh-ink);
+  font-weight: 600;
+  line-height: 1.45;
+}
 .required {
+  margin-top: calc(-1 * var(--hvh-space-3));
   font-size: var(--hvh-fs-small);
   color: var(--hvh-ink-muted);
 }
@@ -49,6 +57,36 @@
   color: var(--hvh-ink-muted);
   font-variant-numeric: tabular-nums;
 }
+.summary {
+  display: grid;
+  gap: var(--hvh-space-2);
+}
+.summary ul {
+  margin: 0;
+  padding-left: 1.125rem;
+}
+.summary li {
+  padding-block: 0.1875rem;
+}
+.summary a {
+  color: var(--hvh-danger);
+  font-weight: 600;
+}
+
+/* Méhkas: vizuálisan és olvasóval is rejtett, tabulátorral nem érhető el. */
+.honeypot {
+  position: absolute;
+  left: -10000px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.submitArea {
+  display: grid;
+  gap: var(--hvh-space-3);
+}
 .submitRow {
   display: grid;
   gap: var(--hvh-space-3);
@@ -57,7 +95,14 @@
 .submitRow :global(.hvh-btn) {
   width: 100%;
 }
-.submitNote {
+.explain {
+  font-size: var(--hvh-fs-small);
+  color: var(--hvh-ink);
+  line-height: 1.45;
+}
+.dataNote {
+  padding-top: var(--hvh-space-3);
+  border-top: 1px solid var(--hvh-line);
   font-size: var(--hvh-fs-small);
   color: var(--hvh-ink-muted);
   line-height: 1.45;
@@ -84,6 +129,9 @@
   flex-wrap: wrap;
   gap: var(--hvh-space-3);
 }
+.copyActions :global(.hvh-btn) {
+  min-height: 2.75rem;
+}
 .copyOk,
 .copyFail {
   min-height: 1.4em;
@@ -100,6 +148,32 @@
   font-family: var(--hvh-font-mono);
   font-size: 0.9375rem;
 }
+.reopen {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+  font-weight: 600;
+}
+
+.success {
+  display: grid;
+  gap: var(--hvh-space-3);
+  padding: var(--hvh-space-6) var(--hvh-space-5);
+  border: 1px solid var(--hvh-success);
+  border-top-width: 3px;
+  border-radius: var(--hvh-radius);
+  background: var(--hvh-success-tint);
+}
+.success:focus {
+  outline: none;
+}
+.success:focus-visible {
+  outline: 3px solid var(--hvh-focus);
+  outline-offset: 2px;
+}
+.success h3 {
+  color: var(--hvh-forest-strong);
+}
 
 @media (min-width: 640px) {
   .row {
@@ -111,6 +185,9 @@
   }
   .submitRow :global(.hvh-btn) {
     width: auto;
+  }
+  .choices {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 @media (min-width: 960px) {

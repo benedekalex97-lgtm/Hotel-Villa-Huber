@@ -1,0 +1,116 @@
+.demoNotice {
+  grid-auto-flow: column;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: var(--hvh-space-3);
+}
+.demoTag {
+  padding: 0.125rem 0.5rem;
+  border-radius: 999px;
+  background: var(--hvh-warning);
+  color: #fff;
+  font-size: var(--hvh-fs-xs);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.sampleBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.125rem 0.5rem;
+  border: 1px solid var(--hvh-warning);
+  border-radius: 999px;
+  background: var(--hvh-warning-tint);
+  color: var(--hvh-warning);
+  font-size: var(--hvh-fs-xs);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* Számmező: mobilon sor (címke balra, léptető jobbra), szélesen címke fölül. */
+.count {
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  column-gap: var(--hvh-space-3);
+}
+.count > :global(.hvh-error) {
+  grid-column: 1 / -1;
+}
+.stepper {
+  display: inline-flex;
+  align-items: stretch;
+  border: 1px solid var(--hvh-line-strong);
+  border-radius: var(--hvh-radius);
+  background: var(--hvh-surface);
+  overflow: hidden;
+}
+.stepper:focus-within {
+  border-color: var(--hvh-forest);
+  box-shadow: 0 0 0 3px var(--hvh-focus);
+}
+.stepper[data-invalid="true"] {
+  border-color: var(--hvh-danger);
+}
+.stepBtn {
+  flex: none;
+  width: 2.75rem;
+  min-height: 2.75rem;
+  border: 0;
+  background: transparent;
+  color: var(--hvh-forest);
+  font-size: 1.375rem;
+  line-height: 1;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.stepBtn:hover {
+  background: var(--hvh-forest-tint);
+}
+.stepBtn[aria-disabled="true"] {
+  color: var(--hvh-ink-subtle);
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.stepBtn:focus-visible {
+  outline: 3px solid var(--hvh-focus);
+  outline-offset: -3px;
+}
+.countInput {
+  width: 3rem;
+  min-width: 0;
+  min-height: 2.75rem;
+  padding: 0;
+  border: 0;
+  border-inline: 1px solid var(--hvh-line);
+  background: transparent;
+  text-align: center;
+  font-size: 1.0625rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+.countInput::-webkit-outer-spin-button,
+.countInput::-webkit-inner-spin-button {
+  appearance: none;
+  margin: 0;
+}
+.countInput:focus-visible {
+  outline: none;
+}
+
+@media (min-width: 900px) {
+  .count {
+    grid-template-columns: minmax(0, 1fr);
+    align-items: stretch;
+  }
+  .stepper {
+    display: flex;
+  }
+  .countInput {
+    flex: 1;
+  }
+}

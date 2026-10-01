@@ -1,0 +1,75 @@
+.badge {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  max-width: 100%;
+  padding: 0.25rem 0.625rem;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  font-family: var(--hvh-font-sans);
+  font-size: var(--hvh-fs-xs);
+  font-weight: 600;
+  line-height: 1.35;
+  letter-spacing: 0.01em;
+  text-align: left;
+}
+.badge::before {
+  content: "";
+  flex: none;
+  width: 0.5rem;
+  height: 0.5rem;
+  margin-top: 0.3rem;
+  background: currentColor;
+}
+
+/* Megerősített: telt zöld kör */
+.jovahagyott {
+  background: var(--hvh-forest-tint);
+  border-color: var(--hvh-forest);
+  color: var(--hvh-forest-strong);
+}
+.jovahagyott::before {
+  border-radius: 50%;
+}
+
+/* Korábbi nyilvános közlés, megerősítésre vár: üres kör */
+.nyilvanos-megerositendo {
+  background: var(--hvh-warning-tint);
+  border-color: var(--hvh-warning);
+  color: var(--hvh-warning);
+}
+.nyilvanos-megerositendo::before {
+  border-radius: 50%;
+  background: transparent;
+  border: 2px solid currentColor;
+}
+
+/* Tulajdonosi közlés: rombusz */
+.tulajdonosi-kozles {
+  background: var(--hvh-surface);
+  border-color: var(--hvh-bronze);
+  color: var(--hvh-bronze-ink);
+}
+.tulajdonosi-kozles::before {
+  transform: rotate(45deg) scale(0.85);
+}
+
+/* Egyeztetés tárgya: szaggatott keret, vonás */
+.ismeretlen {
+  background: transparent;
+  border-style: dashed;
+  border-color: var(--hvh-line-strong);
+  color: var(--hvh-ink-muted);
+}
+.ismeretlen::before {
+  height: 2px;
+  margin-top: 0.55rem;
+}
+
+/* Sötét felületen is a világos címke marad olvasható */
+:global(.hvh-surface-dark) .badge {
+  background: var(--hvh-surface);
+}
+:global(.hvh-surface-dark) .jovahagyott { background: var(--hvh-forest-tint); }
+:global(.hvh-surface-dark) .nyilvanos-megerositendo { background: var(--hvh-warning-tint); }
+:global(.hvh-surface-dark) .ismeretlen { color: var(--hvh-ink-muted); border-color: var(--hvh-line-strong); }

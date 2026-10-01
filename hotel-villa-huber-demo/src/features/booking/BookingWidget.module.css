@@ -1,0 +1,49 @@
+.widget {
+  display: grid;
+  gap: var(--hvh-space-5);
+  padding: var(--hvh-space-5);
+  border-radius: var(--hvh-radius-lg);
+  background: var(--hvh-paper);
+  color: var(--hvh-ink);
+  box-shadow: var(--hvh-shadow);
+  --hvh-focus: #a46a26;
+}
+.form {
+  display: grid;
+  gap: var(--hvh-space-5);
+}
+.fields {
+  display: grid;
+  gap: var(--hvh-space-4);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+}
+/* Mobil: a számmezők külön, teljes szélességű sorok. */
+.fields > :nth-child(n + 3) {
+  grid-column: 1 / -1;
+}
+.submit {
+  width: 100%;
+  min-height: 3.25rem;
+}
+.fine {
+  font-size: var(--hvh-fs-small);
+  color: var(--hvh-ink-muted);
+}
+
+@media (min-width: 900px) {
+  .widget {
+    padding: var(--hvh-space-6);
+  }
+  .fields {
+    grid-template-columns: repeat(2, minmax(0, 1.25fr)) repeat(3, minmax(0, 1fr));
+  }
+  .fields > :nth-child(n + 3) {
+    grid-column: auto;
+  }
+  .submit {
+    width: auto;
+    justify-self: start;
+    min-width: 18rem;
+  }
+}

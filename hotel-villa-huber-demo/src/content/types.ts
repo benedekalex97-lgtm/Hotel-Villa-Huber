@@ -30,7 +30,14 @@ export type SourceId =
   | "SRC-KEPINVENTAR-V2"
   | "SRC-BOOKING-EXPORT"
   | "SRC-PUBLIC-LEGACY"
-  | "SRC-OWNER-VERBAL";
+  | "SRC-OWNER-VERBAL"
+  | "SRC-BRIEF-V2.1"
+  | "SRC-FACT-REGISTER"
+  | "SRC-OWNER-DOCS"
+  | "SRC-HVH-WEB"
+  | "SRC-OTA"
+  | "SRC-BROKER"
+  | "SRC-OFFICIAL-REGION";
 
 export interface Source {
   id: SourceId;
@@ -93,5 +100,6 @@ export type MediaSlotId =
   | "home.villa"
   | "home.location"
   | "home.saleTeaser"
+  | "booking.hero"
   | "sale.hero"
   | "sale.property";

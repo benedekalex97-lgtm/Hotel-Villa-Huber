@@ -14,10 +14,10 @@ await page.evaluate(async () => {
   // lazy képek betöltése teljes oldalas képhez
   document.querySelectorAll('img[loading="lazy"]').forEach((img) => (img.loading = "eager"));
   for (let y = 0; y < document.body.scrollHeight; y += 600) {
-    window.scrollTo(0, y);
+    window.scrollTo({ top: y, behavior: "instant" });
     await new Promise((r) => setTimeout(r, 60));
   }
-  window.scrollTo(0, 0);
+  window.scrollTo({ top: 0, behavior: "instant" });
 });
 await page.waitForFunction(() => Array.from(document.images).every((img) => img.complete && img.naturalWidth > 0), null, { timeout: 30000 }).catch(() => {});
 await page.waitForTimeout(300);

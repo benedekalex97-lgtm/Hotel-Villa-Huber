@@ -16,15 +16,18 @@
     "test": "vitest run",
     "verify:public": "node scripts/verify-public-build.mjs .next-public",
     "test:e2e": "playwright test",
-    "check": "npm run typecheck && npm run lint && npm test && npm run build:public && npm run verify:public && npm run build:internal && npm run test:e2e",
-    "wordmark": "python3 scripts/build-wordmark.py"
+    "check": "npm run typecheck && npm run lint && npm test && npm run build:public && npm run verify:public && npm run build:internal && npm run build:pages && npm run verify:pages && npm run test:e2e",
+    "wordmark": "python3 scripts/build-wordmark.py",
+    "build:pages": "HVH_STATIC_EXPORT=1 HVH_BASE_PATH=${HVH_BASE_PATH:-/Hotel-Villa-Huber} next build",
+    "verify:pages": "node scripts/verify-public-build.mjs out"
   },
   "dependencies": {
     "@fontsource-variable/fraunces": "^5.3.0",
     "@fontsource-variable/source-sans-3": "^5.3.0",
     "next": "^16.3.8",
     "react": "^19.3.0",
-    "react-dom": "^19.3.0"
+    "react-dom": "^19.3.0",
+    "server-only": "^0.0.1"
   },
   "devDependencies": {
     "@playwright/test": "^1.63.0",

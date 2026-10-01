@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { SalePage } from "@/features/sale/SalePage";
 import { PROPERTY } from "@/content/property";
+import { deliveryMode } from "@/features/inquiry/delivery";
 
 export const metadata: Metadata = {
   title: "Eladó hotel",
@@ -8,5 +9,6 @@ export const metadata: Metadata = {
 };
 
 export default function Page() {
-  return <SalePage />;
+  // A kézbesítési mód a szerveren dől el (env); kulcs nem kerül a kliensbe, csak a mód.
+  return <SalePage deliveryMode={deliveryMode()} />;
 }

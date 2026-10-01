@@ -13,7 +13,7 @@ export function SiteFooter() {
             <Wordmark width={170} tone="light" />
             <p>{PROPERTY.placeLineFull}</p>
             <p>
-              Értékesítési kapcsolat: <a href={CONTACT.mailtoHref}>{CONTACT.email}</a>
+              Értékesítés: <a href={CONTACT.mailtoHref}>{CONTACT.email}</a>
             </p>
           </div>
           <nav aria-label="Lábléc navigáció">
@@ -27,7 +27,7 @@ export function SiteFooter() {
           </nav>
         </div>
         <p className={styles.bottom}>
-          Ez az oldal a {PROPERTY.name} ingatlan bemutatását szolgálja. Szobafoglalás ezen az oldalon nem lehetséges.
+          A foglalási folyamat ezen az oldalon bemutató jellegű; valódi foglalás nem történik. Az oldal a {PROPERTY.name} értékesítését is szolgálja.
         </p>
       </div>
     </footer>
