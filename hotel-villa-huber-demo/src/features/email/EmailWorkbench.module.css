@@ -1,0 +1,213 @@
+/* Belső email-munkafelület — tokenek: src/app/globals.css */
+
+.wrap {
+  display: grid;
+  gap: var(--hvh-space-5);
+}
+
+.header {
+  display: grid;
+  gap: var(--hvh-space-2);
+  max-width: 52rem;
+}
+.title {
+  font-size: clamp(1.75rem, 1.4rem + 1.35vw, 2.25rem);
+}
+.lead {
+  color: var(--hvh-ink-muted);
+  font-size: var(--hvh-fs-small);
+  line-height: 1.5;
+}
+
+/* — Elrendezés: mobil egy oszlop, tablet két oszlop, asztali három — */
+.grid {
+  display: grid;
+  gap: var(--hvh-space-4);
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+}
+@media (min-width: 48rem) {
+  .grid {
+    grid-template-columns: minmax(16rem, 20rem) minmax(0, 1fr);
+    grid-template-areas:
+      "controls editor"
+      "controls preview";
+  }
+  .controls { grid-area: controls; }
+  .editorCol { grid-area: editor; }
+  .previewCol { grid-area: preview; }
+}
+@media (min-width: 80rem) {
+  .grid {
+    grid-template-columns: 21rem minmax(0, 1.15fr) minmax(0, 1fr);
+    grid-template-areas: "controls editor preview";
+  }
+  .previewCol {
+    position: sticky;
+    top: 4.5rem;
+  }
+}
+
+.panel {
+  display: grid;
+  gap: var(--hvh-space-5);
+  min-width: 0;
+  padding: var(--hvh-space-4);
+  border: 1px solid var(--hvh-line);
+  border-radius: var(--hvh-radius-lg);
+  background: var(--hvh-surface);
+}
+@media (min-width: 48rem) {
+  .panel { padding: var(--hvh-space-5); }
+}
+
+.stack {
+  display: grid;
+  gap: var(--hvh-space-4);
+  min-width: 0;
+}
+.stackTight {
+  display: grid;
+  gap: var(--hvh-space-2);
+  min-width: 0;
+}
+
+.panelTitle {
+  font-family: var(--hvh-font-sans);
+  font-size: var(--hvh-fs-body);
+  font-weight: 700;
+  letter-spacing: 0;
+  padding: 0;
+}
+
+.fieldset {
+  display: grid;
+  gap: var(--hvh-space-3);
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.fieldset > legend {
+  margin-bottom: var(--hvh-space-3);
+}
+.choices {
+  display: grid;
+  gap: var(--hvh-space-2);
+}
+.choiceText {
+  display: grid;
+  gap: 0.125rem;
+  min-width: 0;
+}
+.choiceLabel {
+  font-weight: 700;
+}
+.choiceDesc {
+  font-size: var(--hvh-fs-small);
+  color: var(--hvh-ink-muted);
+  line-height: 1.4;
+}
+
+/* — Mezők állapota (nyugodt) — */
+.status,
+.statusOk,
+.note {
+  font-size: var(--hvh-fs-xs);
+  line-height: 1.4;
+  min-height: 1.1rem;
+}
+.status { color: var(--hvh-ink-muted); }
+.statusOk { color: var(--hvh-success); font-weight: 600; }
+.note { color: var(--hvh-warning); }
+
+.btnRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--hvh-space-2);
+}
+/* ≥ 44 px érintési cél (a .hvh-btn--sm 40 px-es) */
+.touch.touch {
+  min-height: 2.75rem;
+}
+
+.contact {
+  display: grid;
+  gap: var(--hvh-space-1);
+  padding-top: var(--hvh-space-4);
+  border-top: 1px solid var(--hvh-line);
+  font-size: var(--hvh-fs-small);
+  overflow-wrap: anywhere;
+}
+.contactLabel { color: var(--hvh-ink-muted); }
+
+/* — Szerkesztő — */
+.bodyArea {
+  min-height: 18rem;
+  line-height: 1.6;
+  field-sizing: content;
+}
+
+/* — Készenlét, másolás — */
+.readyLine { font-size: var(--hvh-fs-body); }
+.missingList {
+  margin: 0;
+  padding-left: 1.125rem;
+  display: grid;
+  gap: var(--hvh-space-1);
+}
+.guard:focus-visible { outline-offset: 3px; }
+
+.feedbackSlot {
+  min-height: 1.5rem;
+}
+.feedbackOk,
+.feedbackErr {
+  font-size: var(--hvh-fs-small);
+  font-weight: 600;
+  line-height: 1.4;
+}
+.feedbackOk { color: var(--hvh-success); }
+.feedbackErr { color: var(--hvh-danger); }
+
+/* — Előnézet — */
+.paper {
+  padding: var(--hvh-space-5);
+  border: 1px solid var(--hvh-line);
+  border-radius: var(--hvh-radius);
+  background: #fff;
+  box-shadow: var(--hvh-shadow-sm), var(--hvh-shadow);
+  font-size: var(--hvh-fs-small);
+  line-height: 1.65;
+  overflow-wrap: anywhere;
+  min-width: 0;
+}
+.paperSubject {
+  padding-bottom: var(--hvh-space-3);
+  margin-bottom: var(--hvh-space-4);
+  border-bottom: 1px solid var(--hvh-line);
+  font-weight: 600;
+}
+.paperLabel {
+  color: var(--hvh-ink-muted);
+  font-weight: 400;
+}
+.paperBody {
+  white-space: pre-wrap;
+}
+.ph {
+  padding: 0 0.05em;
+  border-radius: 2px;
+  background: var(--hvh-warning-tint);
+  color: var(--hvh-warning);
+  text-decoration: underline dashed;
+  text-underline-offset: 0.2em;
+  font-weight: 600;
+}
+.phStatus,
+.phStatusOk {
+  font-size: var(--hvh-fs-small);
+  line-height: 1.5;
+}
+.phStatus { color: var(--hvh-ink); }
+.phStatusOk { color: var(--hvh-success); font-weight: 600; }

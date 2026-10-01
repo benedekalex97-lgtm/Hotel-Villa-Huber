@@ -1,0 +1,223 @@
+.section {
+  padding-block: var(--hvh-section-y);
+}
+.deep {
+  background: var(--hvh-paper-deep);
+}
+.band {
+  padding-block: var(--hvh-section-y);
+}
+
+/* — Hero — */
+.hero {
+  padding-block: clamp(2rem, 1rem + 3vw, 4rem) clamp(2.5rem, 1.5rem + 4vw, 5.5rem);
+}
+.heroGrid {
+  display: grid;
+  gap: var(--hvh-space-6);
+  align-items: center;
+}
+.heroText {
+  display: grid;
+  gap: var(--hvh-space-4);
+  justify-items: start;
+  min-width: 0;
+}
+.heroTitle {
+  font-size: var(--hvh-fs-display);
+  line-height: var(--hvh-lh-tight);
+  letter-spacing: -0.02em;
+  color: var(--hvh-forest-strong);
+}
+.tagline {
+  font-family: var(--hvh-font-serif);
+  font-size: var(--hvh-fs-h3);
+  line-height: 1.3;
+  color: var(--hvh-bronze-ink);
+}
+.heroImage {
+  box-shadow: var(--hvh-shadow);
+  width: 100%;
+}
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--hvh-space-3);
+  margin-top: var(--hvh-space-3);
+}
+.actions > a {
+  flex: 0 1 auto;
+}
+
+/* — Szekciófej — */
+.head {
+  display: grid;
+  gap: var(--hvh-space-3);
+  justify-items: start;
+  margin-bottom: var(--hvh-space-6);
+}
+
+/* — Kép + szöveg — */
+.split {
+  display: grid;
+  gap: var(--hvh-space-6);
+  align-items: center;
+}
+.splitText {
+  display: grid;
+  gap: var(--hvh-space-4);
+  justify-items: start;
+  min-width: 0;
+}
+.splitMedia {
+  width: 100%;
+  min-width: 0;
+}
+
+.spaceList {
+  display: grid;
+  gap: var(--hvh-space-2) var(--hvh-space-5);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+  width: 100%;
+}
+.spaceList li {
+  position: relative;
+  padding-left: 1.25rem;
+}
+.spaceList li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.8em;
+  width: 0.6rem;
+  height: 1px;
+  background: var(--hvh-bronze);
+}
+
+/* — Elhelyezkedés — */
+.facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--hvh-space-3) var(--hvh-space-6);
+  margin: 0;
+  padding: var(--hvh-space-4) 0;
+  border-block: 1px solid var(--hvh-line-strong);
+  width: 100%;
+}
+.facts dt {
+  font-size: var(--hvh-fs-xs);
+  font-weight: 600;
+  letter-spacing: var(--hvh-tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--hvh-bronze-ink);
+}
+.facts dd {
+  margin: 0;
+  font-family: var(--hvh-font-serif);
+  font-size: var(--hvh-fs-h3);
+}
+.newTab {
+  color: var(--hvh-ink-muted);
+  font-size: var(--hvh-fs-small);
+}
+.locationFigure {
+  margin: 0;
+  max-width: 32.5rem;
+}
+.figCaption {
+  margin-top: var(--hvh-space-2);
+  font-size: var(--hvh-fs-small);
+  color: var(--hvh-ink-muted);
+}
+
+/* — Értékesítési sáv — */
+.pathList {
+  display: grid;
+  gap: var(--hvh-space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  width: 100%;
+}
+.pathList li {
+  padding: var(--hvh-space-3) 0 var(--hvh-space-3) var(--hvh-space-4);
+  border-left: 2px solid #e0bd8a;
+  font-family: var(--hvh-font-serif);
+  font-size: var(--hvh-fs-h3);
+  line-height: 1.3;
+}
+
+/* — Kapcsolat — */
+.contact {
+  display: grid;
+  gap: var(--hvh-space-5);
+  align-items: start;
+}
+.contactCard {
+  display: grid;
+  gap: var(--hvh-space-2);
+  padding: var(--hvh-space-5);
+  border: 1px solid var(--hvh-line);
+  border-top: 3px solid var(--hvh-bronze);
+  border-radius: var(--hvh-radius);
+  background: var(--hvh-surface);
+  min-width: 0;
+}
+.contactLabel {
+  font-size: var(--hvh-fs-xs);
+  font-weight: 600;
+  letter-spacing: var(--hvh-tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--hvh-bronze-ink);
+}
+.contactMail {
+  font-family: var(--hvh-font-serif);
+  font-size: var(--hvh-fs-h3);
+  overflow-wrap: anywhere;
+}
+.contactNote {
+  margin-top: var(--hvh-space-2);
+  color: var(--hvh-ink-muted);
+  font-size: var(--hvh-fs-small);
+}
+
+@media (min-width: 960px) {
+  .heroGrid {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: var(--hvh-space-8);
+  }
+  .split {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+    gap: var(--hvh-space-8);
+  }
+  .imageFirst {
+    grid-template-columns: minmax(0, 6fr) minmax(0, 5fr);
+  }
+  .imageFirst .splitMedia {
+    order: -1;
+  }
+  .locationFigure {
+    justify-self: end;
+  }
+  .contact {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: var(--hvh-space-8);
+    align-items: center;
+  }
+  .head {
+    margin-bottom: var(--hvh-space-7);
+  }
+  .contact .head {
+    margin-bottom: 0;
+  }
+}
+
+.bandText {
+  max-width: var(--hvh-max-text);
+  font-size: var(--hvh-fs-lead);
+  line-height: 1.55;
+  color: var(--hvh-on-dark-muted);
+}

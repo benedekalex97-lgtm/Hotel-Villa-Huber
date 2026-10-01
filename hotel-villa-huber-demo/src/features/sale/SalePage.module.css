@@ -1,0 +1,251 @@
+.section {
+  padding-block: var(--hvh-section-y);
+}
+.deep {
+  background: var(--hvh-paper-deep);
+}
+.band {
+  padding-block: var(--hvh-section-y);
+}
+
+/* — Hero — */
+.hero {
+  padding-block: clamp(2rem, 1rem + 3vw, 4rem) clamp(2.5rem, 1.5rem + 4vw, 5.5rem);
+}
+.heroGrid {
+  display: grid;
+  gap: var(--hvh-space-6);
+  align-items: center;
+}
+.heroText {
+  display: grid;
+  gap: var(--hvh-space-4);
+  justify-items: start;
+  min-width: 0;
+}
+.heroTitle {
+  font-size: var(--hvh-fs-h1);
+  line-height: var(--hvh-lh-tight);
+  letter-spacing: -0.015em;
+  color: var(--hvh-forest-strong);
+}
+.heroImage {
+  box-shadow: var(--hvh-shadow);
+  width: 100%;
+}
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--hvh-space-3);
+  margin-top: var(--hvh-space-3);
+}
+
+/* — Szekciófej — */
+.head {
+  display: grid;
+  gap: var(--hvh-space-3);
+  justify-items: start;
+  margin-bottom: var(--hvh-space-6);
+}
+
+/* — Ingatlan — */
+.split {
+  display: grid;
+  gap: var(--hvh-space-6);
+  align-items: center;
+}
+.splitText {
+  display: grid;
+  gap: var(--hvh-space-4);
+  justify-items: start;
+  min-width: 0;
+}
+.splitMedia {
+  width: 100%;
+  min-width: 0;
+}
+.facts {
+  display: grid;
+  gap: var(--hvh-space-4);
+  margin: 0;
+  padding: var(--hvh-space-4) 0;
+  border-block: 1px solid var(--hvh-line-strong);
+  width: 100%;
+}
+.facts dt {
+  font-size: var(--hvh-fs-xs);
+  font-weight: 600;
+  letter-spacing: var(--hvh-tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--hvh-bronze-ink);
+}
+.facts dd {
+  margin: var(--hvh-space-1) 0 0;
+  font-family: var(--hvh-font-serif);
+  font-size: var(--hvh-fs-h3);
+  line-height: 1.3;
+}
+.facts dd.factText {
+  font-family: var(--hvh-font-sans);
+  font-size: var(--hvh-fs-body);
+  line-height: 1.5;
+}
+
+/* — Kártyák — */
+.cards {
+  display: grid;
+  gap: var(--hvh-space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.card {
+  position: relative;
+  display: grid;
+  align-content: start;
+  gap: var(--hvh-space-3);
+  padding: var(--hvh-space-5);
+  border: 1px solid var(--hvh-line);
+  border-radius: var(--hvh-radius);
+  background: var(--hvh-surface);
+  min-width: 0;
+}
+.cardNumber {
+  font-family: var(--hvh-font-serif);
+  font-size: var(--hvh-fs-h3);
+  color: var(--hvh-bronze-ink);
+  line-height: 1;
+}
+.card p {
+  color: var(--hvh-ink-muted);
+}
+.question {
+  margin-top: auto;
+  padding-top: var(--hvh-space-3);
+  border-top: 1px solid var(--hvh-line);
+  color: var(--hvh-ink) !important;
+}
+
+.pathCard {
+  display: grid;
+  align-content: start;
+  gap: var(--hvh-space-4);
+  padding: var(--hvh-space-5);
+  border: 1px solid var(--hvh-line);
+  border-top: 3px solid var(--hvh-bronze);
+  border-radius: var(--hvh-radius);
+  background: var(--hvh-surface);
+  min-width: 0;
+}
+.pathCard > p:not(.listLabel) {
+  color: var(--hvh-ink-muted);
+}
+.listLabel {
+  margin-bottom: var(--hvh-space-2);
+  font-size: var(--hvh-fs-xs);
+  font-weight: 600;
+  letter-spacing: var(--hvh-tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--hvh-bronze-ink);
+}
+.topics {
+  display: grid;
+  gap: var(--hvh-space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.topics li {
+  position: relative;
+  padding-left: 1.25rem;
+}
+.topics li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.8em;
+  width: 0.6rem;
+  height: 1px;
+  background: var(--hvh-bronze);
+}
+.pathCard :global(.hvh-notice) {
+  margin-top: auto;
+  color: var(--hvh-ink);
+}
+
+/* — Lépések — */
+.steps {
+  display: grid;
+  gap: var(--hvh-space-5);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.step {
+  display: grid;
+  align-content: start;
+  gap: var(--hvh-space-3);
+  padding-top: var(--hvh-space-4);
+  border-top: 1px solid rgb(246 241 231 / 0.35);
+}
+.step p {
+  color: var(--hvh-on-dark-muted);
+}
+.stepNumber {
+  font-family: var(--hvh-font-serif);
+  font-size: var(--hvh-fs-display);
+  line-height: 1;
+  color: #e0bd8a;
+}
+
+/* — Kapcsolatfelvétel — */
+.contact {
+  display: grid;
+  gap: var(--hvh-space-6);
+  align-items: start;
+}
+.contactIntro {
+  display: grid;
+  gap: var(--hvh-space-3);
+  justify-items: start;
+}
+
+@media (min-width: 720px) {
+  .cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--hvh-space-5);
+  }
+  .steps {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--hvh-space-6);
+  }
+}
+@media (min-width: 960px) {
+  .heroGrid {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: var(--hvh-space-8);
+  }
+  .split {
+    grid-template-columns: minmax(0, 6fr) minmax(0, 5fr);
+    gap: var(--hvh-space-8);
+  }
+  .head {
+    margin-bottom: var(--hvh-space-7);
+  }
+  .contact {
+    grid-template-columns: minmax(0, 4fr) minmax(0, 7fr);
+    gap: var(--hvh-space-8);
+  }
+  .contactIntro {
+    position: sticky;
+    top: calc(var(--hvh-header-h) + var(--hvh-space-5));
+  }
+}
+@media (min-width: 1100px) {
+  .cards:not(.paths):not(.topicCards) {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  .topicCards {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}

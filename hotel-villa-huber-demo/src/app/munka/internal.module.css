@@ -1,0 +1,46 @@
+.shell {
+  min-height: 100vh;
+  background: var(--hvh-paper);
+}
+.bar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: var(--hvh-surface);
+  border-bottom: 1px solid var(--hvh-line);
+}
+.barInner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--hvh-space-2) var(--hvh-space-4);
+  max-width: 90rem;
+  margin: 0 auto;
+  padding: var(--hvh-space-2) var(--hvh-space-4);
+  min-height: 3.25rem;
+}
+.brand {
+  display: inline-flex;
+  border-radius: var(--hvh-radius-sm);
+}
+.badge {
+  padding: 0.125rem 0.5rem;
+  border-radius: 999px;
+  background: var(--hvh-warning-tint);
+  color: var(--hvh-warning);
+  font-size: var(--hvh-fs-xs);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+.nav {
+  display: flex;
+  gap: var(--hvh-space-4);
+  margin-left: auto;
+  font-size: var(--hvh-fs-small);
+  font-weight: 600;
+}
+.main {
+  max-width: 90rem;
+  margin: 0 auto;
+  padding: var(--hvh-space-5) var(--hvh-space-4) var(--hvh-space-8);
+}

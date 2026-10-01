@@ -1,0 +1,37 @@
+.frame {
+  position: relative;
+  overflow: hidden;
+  margin: 0;
+  border-radius: var(--hvh-radius);
+  background: var(--hvh-paper-deep);
+  /* A meglévő képek natív szélessége 1024 px: ennél nagyobbra nem nyújtjuk. */
+  max-width: var(--hvh-max-media);
+}
+.frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.figure {
+  margin: 0;
+  max-width: var(--hvh-max-media);
+}
+.caption {
+  margin-top: var(--hvh-space-2);
+  font-size: var(--hvh-fs-small);
+  color: var(--hvh-ink-muted);
+}
+.placeholder {
+  display: grid;
+  place-items: center;
+  gap: var(--hvh-space-3);
+  width: 100%;
+  height: 100%;
+  border: 1px dashed var(--hvh-line-strong);
+  border-radius: var(--hvh-radius);
+  background:
+    repeating-linear-gradient(135deg, transparent 0 14px, rgb(155 107 58 / 0.06) 14px 15px),
+    var(--hvh-paper-deep);
+  color: var(--hvh-ink-subtle);
+  text-align: center;
+}

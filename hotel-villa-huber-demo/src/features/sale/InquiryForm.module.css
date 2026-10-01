@@ -1,0 +1,120 @@
+.wrap {
+  display: grid;
+  gap: var(--hvh-space-5);
+  min-width: 0;
+}
+.form {
+  display: grid;
+  gap: var(--hvh-space-5);
+  padding: var(--hvh-space-5);
+  border: 1px solid var(--hvh-line);
+  border-top: 3px solid var(--hvh-bronze);
+  border-radius: var(--hvh-radius);
+  background: var(--hvh-surface);
+  box-shadow: var(--hvh-shadow-sm);
+  min-width: 0;
+}
+.required {
+  font-size: var(--hvh-fs-small);
+  color: var(--hvh-ink-muted);
+}
+.row {
+  display: grid;
+  gap: var(--hvh-space-5);
+}
+.fieldset {
+  display: grid;
+  gap: var(--hvh-space-2);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+.fieldset legend {
+  padding: 0;
+  margin-bottom: var(--hvh-space-2);
+}
+.choices {
+  display: grid;
+  gap: var(--hvh-space-2);
+}
+.choices :global(.hvh-choice) {
+  min-height: 3rem;
+  align-items: center;
+}
+.counter {
+  margin: 0;
+  justify-self: end;
+  font-size: var(--hvh-fs-small);
+  color: var(--hvh-ink-muted);
+  font-variant-numeric: tabular-nums;
+}
+.submitRow {
+  display: grid;
+  gap: var(--hvh-space-3);
+  align-items: center;
+}
+.submitRow :global(.hvh-btn) {
+  width: 100%;
+}
+.submitNote {
+  font-size: var(--hvh-fs-small);
+  color: var(--hvh-ink-muted);
+  line-height: 1.45;
+}
+
+.prepared {
+  display: grid;
+  gap: var(--hvh-space-4);
+}
+.fallback {
+  display: grid;
+  gap: var(--hvh-space-3);
+  padding: var(--hvh-space-5);
+  border: 1px solid var(--hvh-line);
+  border-radius: var(--hvh-radius);
+  background: var(--hvh-surface);
+  min-width: 0;
+}
+.fallback h3 {
+  font-size: 1.125rem;
+}
+.copyActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--hvh-space-3);
+}
+.copyOk,
+.copyFail {
+  min-height: 1.4em;
+  font-size: var(--hvh-fs-small);
+  font-weight: 600;
+}
+.copyOk { color: var(--hvh-success); }
+.copyFail { color: var(--hvh-danger); }
+.recipient {
+  font-size: var(--hvh-fs-small);
+  overflow-wrap: anywhere;
+}
+.preparedText {
+  font-family: var(--hvh-font-mono);
+  font-size: 0.9375rem;
+}
+
+@media (min-width: 640px) {
+  .row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .submitRow {
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: var(--hvh-space-5);
+  }
+  .submitRow :global(.hvh-btn) {
+    width: auto;
+  }
+}
+@media (min-width: 960px) {
+  .form {
+    padding: var(--hvh-space-6);
+  }
+}
