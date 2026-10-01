@@ -4,7 +4,7 @@ import { internalToolsEnabled } from "@/lib/internal-gate";
 import { EmailWorkbench } from "@/features/email/EmailWorkbench";
 
 export const metadata: Metadata = {
-  title: "Emailsablonok",
+  title: "Hotel Villa Huber bemutató email",
   robots: { index: false, follow: false, nocache: true },
 };
 

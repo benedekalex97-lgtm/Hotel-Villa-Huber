@@ -37,6 +37,16 @@ export const FACT_STATUS_PUBLIC_LABEL: Record<FactStatus, string> = {
   ismeretlen: "Egyeztetés tárgya",
 };
 
+/** Az állapotcímkék sorrendje és magyarázata — a landing jelmagyarázata és az emailbemutató közös forrása. */
+export const FACT_STATUS_ORDER: readonly FactStatus[] = ["jovahagyott", "nyilvanos-megerositendo", "tulajdonosi-kozles", "ismeretlen"];
+
+export const FACT_STATUS_EXPLANATION: Record<FactStatus, string> = {
+  jovahagyott: "A projekt elfogadott anyagaiban rögzített adat.",
+  "nyilvanos-megerositendo": "Korábbi nyilvános anyagból származik; a tulajdonos még nem erősítette meg.",
+  "tulajdonosi-kozles": "A tulajdonos közölte, dokumentum még nem igazolja.",
+  ismeretlen: "Nincs megbízható adat; az egyeztetés során tisztázzuk.",
+};
+
 export const PUBLIC_FACTS = [
   // — Alapadatok —
   {

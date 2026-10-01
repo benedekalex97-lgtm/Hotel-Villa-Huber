@@ -20,4 +20,5 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 - Nincs tracker, cookie-banner, külső beágyazás, localStorage/sessionStorage személyes adattal, console.log személyes adattal.
 - Design tokenek és alaposztályok: `src/app/globals.css` (`.hvh-*`, `.hvh-surface-dark`). Komponensstílus CSS Modules-szal, a saját feature-mappában.
 - Képek: `MEDIA`, `MEDIA_SLOTS`, `GALLERY` (`src/content/media.ts`), megjelenítés `MediaImage`-dzsel; natív szélesség ≤ 1024 px, nem nyújtjuk teljes képernyősre.
+- Befektetői bemutató email: egyetlen aktív sablon, belső (`src/features/email/`, `/munka/email`); tartalom csak a központi `src/content/*` modulokból, linkek a `NEXT_PUBLIC_SITE_URL`-ből (`src/content/site-url.ts`). Részletek: `docs/HVH_EMAIL_TEMPLATE.md`.
 - Ellenőrzés: `npm run typecheck`, `npm run lint`, `npm test`; képernyőkép: `node scripts/shot.mjs <url> <png> <szélesség> <full>`.

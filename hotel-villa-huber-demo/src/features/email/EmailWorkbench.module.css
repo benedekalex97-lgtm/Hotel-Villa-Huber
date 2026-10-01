@@ -8,7 +8,7 @@
 .header {
   display: grid;
   gap: var(--hvh-space-2);
-  max-width: 52rem;
+  max-width: 56rem;
 }
 .title {
   font-size: clamp(1.75rem, 1.4rem + 1.35vw, 2.25rem);
@@ -18,31 +18,38 @@
   font-size: var(--hvh-fs-small);
   line-height: 1.5;
 }
+.baseUrl {
+  font-size: var(--hvh-fs-xs);
+  color: var(--hvh-ink-muted);
+  overflow-wrap: anywhere;
+}
 
-/* — Elrendezés: mobil egy oszlop, tablet két oszlop, asztali három — */
+/* — Elrendezés: mobil egy oszlop (adatok, műveletek, előnézet, szekciószövegek), asztalon két oszlop — */
 .grid {
   display: grid;
   gap: var(--hvh-space-4);
   grid-template-columns: minmax(0, 1fr);
+  grid-template-areas:
+    "fields"
+    "actions"
+    "preview"
+    "sections";
   align-items: start;
 }
-@media (min-width: 48rem) {
+.areaFields { grid-area: fields; }
+.areaActions { grid-area: actions; }
+.areaPreview { grid-area: preview; }
+.areaSections { grid-area: sections; }
+
+@media (min-width: 64rem) {
   .grid {
-    grid-template-columns: minmax(16rem, 20rem) minmax(0, 1fr);
+    grid-template-columns: minmax(20rem, 26rem) minmax(0, 1fr);
     grid-template-areas:
-      "controls editor"
-      "controls preview";
+      "fields preview"
+      "actions preview"
+      "sections preview";
   }
-  .controls { grid-area: controls; }
-  .editorCol { grid-area: editor; }
-  .previewCol { grid-area: preview; }
-}
-@media (min-width: 80rem) {
-  .grid {
-    grid-template-columns: 21rem minmax(0, 1.15fr) minmax(0, 1fr);
-    grid-template-areas: "controls editor preview";
-  }
-  .previewCol {
+  .areaPreview {
     position: sticky;
     top: 4.5rem;
   }
@@ -50,6 +57,7 @@
 
 .panel {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--hvh-space-5);
   min-width: 0;
   padding: var(--hvh-space-4);
@@ -64,6 +72,7 @@
 .stack {
   display: grid;
   gap: var(--hvh-space-4);
+  grid-template-columns: minmax(0, 1fr);
   min-width: 0;
 }
 .stackTight {
@@ -80,46 +89,20 @@
   padding: 0;
 }
 
-.fieldset {
-  display: grid;
-  gap: var(--hvh-space-3);
-  min-width: 0;
-  margin: 0;
-  padding: 0;
-  border: 0;
-}
-.fieldset > legend {
-  margin-bottom: var(--hvh-space-3);
-}
-.choices {
-  display: grid;
-  gap: var(--hvh-space-2);
-}
-.choiceText {
-  display: grid;
-  gap: 0.125rem;
-  min-width: 0;
-}
-.choiceLabel {
-  font-weight: 700;
-}
-.choiceDesc {
-  font-size: var(--hvh-fs-small);
-  color: var(--hvh-ink-muted);
-  line-height: 1.4;
-}
-
 /* — Mezők állapota (nyugodt) — */
 .status,
-.statusOk,
-.note {
+.statusOk {
   font-size: var(--hvh-fs-xs);
   line-height: 1.4;
   min-height: 1.1rem;
 }
 .status { color: var(--hvh-ink-muted); }
 .statusOk { color: var(--hvh-success); font-weight: 600; }
-.note { color: var(--hvh-warning); }
+
+.smallArea {
+  min-height: 5rem;
+  line-height: 1.5;
+}
 
 .btnRow {
   display: flex;
@@ -131,24 +114,47 @@
   min-height: 2.75rem;
 }
 
-.contact {
+/* — Szekciószövegek — */
+.sectionList {
   display: grid;
-  gap: var(--hvh-space-1);
-  padding-top: var(--hvh-space-4);
-  border-top: 1px solid var(--hvh-line);
-  font-size: var(--hvh-fs-small);
-  overflow-wrap: anywhere;
+  gap: var(--hvh-space-2);
 }
-.contactLabel { color: var(--hvh-ink-muted); }
-
-/* — Szerkesztő — */
-.bodyArea {
-  min-height: 18rem;
-  line-height: 1.6;
+.sectionItem {
+  border: 1px solid var(--hvh-line);
+  border-radius: var(--hvh-radius);
+  background: var(--hvh-paper);
+}
+.sectionItem > summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--hvh-space-2);
+  min-height: 2.75rem;
+  padding: var(--hvh-space-2) var(--hvh-space-3);
+  font-weight: 700;
+  cursor: pointer;
+}
+.fieldStack {
+  display: grid;
+  gap: var(--hvh-space-4);
+  padding: var(--hvh-space-3) var(--hvh-space-3) var(--hvh-space-4);
+  border-top: 1px solid var(--hvh-line);
+}
+.fieldArea {
+  min-height: 3.5rem;
+  line-height: 1.5;
   field-sizing: content;
 }
+.editedCount,
+.editedBadge {
+  color: var(--hvh-warning);
+  font-size: var(--hvh-fs-xs);
+  font-weight: 700;
+}
+.restoreBtn { justify-self: start; }
 
-/* — Készenlét, másolás — */
+/* — Készenlét, műveletek — */
 .readyLine { font-size: var(--hvh-fs-body); }
 .missingList {
   margin: 0;
@@ -156,8 +162,6 @@
   display: grid;
   gap: var(--hvh-space-1);
 }
-.guard:focus-visible { outline-offset: 3px; }
-
 .feedbackSlot {
   min-height: 1.5rem;
 }
@@ -169,45 +173,58 @@
 }
 .feedbackOk { color: var(--hvh-success); }
 .feedbackErr { color: var(--hvh-danger); }
+.manualArea {
+  min-height: 8rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: var(--hvh-fs-xs);
+}
 
-/* — Előnézet — */
-.paper {
-  padding: var(--hvh-space-5);
+/* — Előnézet (ugyanaz a HTML, mint az export) — */
+.previewHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--hvh-space-3);
+}
+.segmented {
+  display: inline-flex;
+  border: 1px solid var(--hvh-line-strong);
+  border-radius: var(--hvh-radius);
+  overflow: hidden;
+}
+.segBtn {
+  min-height: 2.75rem;
+  padding: 0 var(--hvh-space-4);
+  border: 0;
+  background: var(--hvh-surface);
+  color: var(--hvh-ink);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+.segBtn + .segBtn { border-left: 1px solid var(--hvh-line-strong); }
+.segBtn[aria-pressed="true"] {
+  background: var(--hvh-forest);
+  color: var(--hvh-surface);
+}
+.frameWrap {
+  min-width: 0;
+  max-width: 100%;
   border: 1px solid var(--hvh-line);
   border-radius: var(--hvh-radius);
+  background: #ddd6c6;
+  overflow: hidden;
+}
+.frameWrapMobile {
+  justify-self: center;
+  width: 390px;
+  max-width: 100%;
+}
+.frame {
+  display: block;
+  width: 100%;
+  height: min(78vh, 56rem);
+  border: 0;
   background: #fff;
-  box-shadow: var(--hvh-shadow-sm), var(--hvh-shadow);
-  font-size: var(--hvh-fs-small);
-  line-height: 1.65;
-  overflow-wrap: anywhere;
-  min-width: 0;
 }
-.paperSubject {
-  padding-bottom: var(--hvh-space-3);
-  margin-bottom: var(--hvh-space-4);
-  border-bottom: 1px solid var(--hvh-line);
-  font-weight: 600;
-}
-.paperLabel {
-  color: var(--hvh-ink-muted);
-  font-weight: 400;
-}
-.paperBody {
-  white-space: pre-wrap;
-}
-.ph {
-  padding: 0 0.05em;
-  border-radius: 2px;
-  background: var(--hvh-warning-tint);
-  color: var(--hvh-warning);
-  text-decoration: underline dashed;
-  text-underline-offset: 0.2em;
-  font-weight: 600;
-}
-.phStatus,
-.phStatusOk {
-  font-size: var(--hvh-fs-small);
-  line-height: 1.5;
-}
-.phStatus { color: var(--hvh-ink); }
-.phStatusOk { color: var(--hvh-success); font-weight: 600; }

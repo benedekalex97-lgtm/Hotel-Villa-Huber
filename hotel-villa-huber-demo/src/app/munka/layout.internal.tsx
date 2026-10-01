@@ -25,7 +25,7 @@ export default function InternalLayout({ children }: { children: React.ReactNode
           </Link>
           <span className={styles.badge}>Belső · helyi használat</span>
           <nav aria-label="Belső navigáció" className={styles.nav}>
-            <Link href={INTERNAL_ROUTES.email}>Emailsablonok</Link>
+            <Link href={INTERNAL_ROUTES.email}>Bemutató email</Link>
             <Link href={INTERNAL_ROUTES.brand}>Brand board</Link>
           </nav>
         </div>

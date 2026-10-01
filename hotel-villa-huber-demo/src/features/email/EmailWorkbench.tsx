@@ -1,59 +1,45 @@
 "use client";
 
-import { useEffect, useReducer, useRef, useState } from "react";
-import { copyPlainText } from "@/lib/clipboard";
-import { CopyBar, type Feedback } from "./CopyBar";
-import { Editor } from "./Editor";
-import { FieldsPanel } from "./FieldsPanel";
-import { Preview } from "./Preview";
-import { TemplatePicker } from "./TemplatePicker";
-import { draftReducer, initialDraftState, type TextField } from "./draft";
-import { computeReadiness, findPlaceholders } from "./render";
-import { getTemplate, type TemplateId, type VarName } from "./templates";
+import { useEffect, useMemo, useReducer, useRef, useState } from "react";
+import { SITE_URL_CONFIG } from "@/content/site-url";
+import { ActionPanel, type Feedback, type ManualCopy } from "./ActionPanel";
+import { PersonalPanel } from "./PersonalPanel";
+import { PreviewPane, type PreviewSize } from "./PreviewPane";
+import { SectionsEditor } from "./SectionsEditor";
+import { composeEmail } from "./compose";
+import { countManualEdits, draftReducer, initialDraftState } from "./draft";
+import { EXPORT_FILES, copyRichText, copyText, downloadFile } from "./export";
+import type { EditableField } from "./model";
 import styles from "./EmailWorkbench.module.css";
 
 /** A visszajelzés ennyi ezredmásodperc után eltűnik. */
-const FEEDBACK_MS = 5000;
+const FEEDBACK_MS = 8000;
 
 /**
- * Belső email-sablon munkafelület.
- * A vázlat kizárólag a React-állapotban (böngészőfül memóriája) él: nincs
- * tárolás, hálózati hívás vagy küldés.
+ * Belső munkafelület az egyetlen aktív sablonhoz: „Hotel Villa Huber bemutató”.
+ * A vázlat kizárólag a React-állapotban (böngészőfül memóriája) él: nincs tárolás, hálózati hívás vagy küldés.
+ * Az előnézet és az export ugyanabból az összeállított levélből (`composed`) készül.
  */
 export function EmailWorkbench() {
   const [state, dispatch] = useReducer(draftReducer, undefined, initialDraftState);
+  const [size, setSize] = useState<PreviewSize>("desktop");
   const [attempted, setAttempted] = useState(false);
-  const [guard, setGuard] = useState<{ target: TextField; tick: number } | null>(null);
   const [feedback, setFeedback] = useState<Feedback | null>(null);
+  const [manualCopy, setManualCopy] = useState<ManualCopy | null>(null);
   const [confirmReset, setConfirmReset] = useState(false);
 
   const feedbackSeq = useRef(0);
-  const subjectRef = useRef<HTMLInputElement | null>(null);
-  const bodyRef = useRef<HTMLTextAreaElement | null>(null);
-  const guardRef = useRef<HTMLDivElement | null>(null);
-  const copySubjectRef = useRef<HTMLButtonElement | null>(null);
-  const copyBodyRef = useRef<HTMLButtonElement | null>(null);
   const resetRef = useRef<HTMLButtonElement | null>(null);
   const cancelResetRef = useRef<HTMLButtonElement | null>(null);
 
-  const template = getTemplate(state.active);
-  const draft = state.drafts[state.active];
-  const readiness = computeReadiness(template, state.values, draft.subject, draft.body);
+  const composed = useMemo(() => composeEmail(state, SITE_URL_CONFIG.url), [state]);
+  const manualEdits = countManualEdits(state);
 
-  // A figyelmeztetés a célszöveg aktuális helyőrzőiből számolódik: ha kitöltötték, magától eltűnik.
-  const guardView = guard ? { target: guard.target, placeholders: findPlaceholders(draft[guard.target]) } : null;
-
-  // Visszajelzés automatikus törlése.
   useEffect(() => {
     if (!feedback) return;
     const timer = setTimeout(() => setFeedback(null), FEEDBACK_MS);
     return () => clearTimeout(timer);
   }, [feedback]);
-
-  // Fókusz a figyelmeztetésre, amikor megjelenik.
-  useEffect(() => {
-    if (guard) guardRef.current?.focus();
-  }, [guard]);
 
   // Fókusz a biztonságos „Mégse” gombra a visszaállítás megerősítésekor.
   useEffect(() => {
@@ -65,64 +51,48 @@ export function EmailWorkbench() {
     setFeedback({ kind, text, id: feedbackSeq.current });
   }
 
-  function fieldElement(target: TextField) {
-    return target === "subject" ? subjectRef.current : bodyRef.current;
-  }
-
-  function selectTemplate(id: TemplateId) {
-    dispatch({ type: "select", id });
-    setGuard(null);
-    setFeedback(null);
-    setConfirmReset(false);
-  }
-
-  function changeValue(name: VarName, value: string) {
-    dispatch({ type: "setValue", name, value });
-  }
-
-  function clearValues() {
-    dispatch({ type: "clearValues" });
-    setAttempted(false);
-    setGuard(null);
-  }
-
-  async function copy(target: TextField, force: boolean) {
-    const text = draft[target];
+  /** Közös kapu: hiányos levél nem exportálható. */
+  function guard(): boolean {
     setAttempted(true);
     setConfirmReset(false);
-    if (!force && findPlaceholders(text).length > 0) {
-      // Első kattintás: nem másolunk, figyelmeztetünk.
-      setFeedback(null);
-      setGuard({ target, tick: Date.now() });
+    setManualCopy(null);
+    if (composed.readiness.ready) return true;
+    setFeedback(null);
+    show("error", "A levél még nem kész, ezért nem exportálható. Töltse ki a hiányzó mezőket, és szüntesse meg a jelzett hibákat.");
+    return false;
+  }
+
+  async function copy(label: string, success: string, run: () => Promise<{ ok: true } | { ok: false; message: string }>, fallbackText: string) {
+    if (!guard()) return;
+    const result = await run();
+    if (result.ok) {
+      show("success", success);
       return;
     }
-    setGuard(null);
-    const ok = await copyPlainText(text);
-    if (ok) {
-      show("success", target === "subject" ? "Tárgy a vágólapon." : "Szöveg a vágólapon.");
-    } else {
-      show("error", "A másolás nem sikerült — jelölje ki a szöveget és másolja kézzel (Ctrl/Cmd+C).");
-      const el = fieldElement(target);
-      el?.focus();
-      el?.select();
-      return;
-    }
-    if (force) (target === "subject" ? copySubjectRef : copyBodyRef).current?.focus();
+    show("error", `${result.message} Használja a kézi másolást vagy a fájl letöltését.`);
+    setManualCopy({ label, text: fallbackText });
+  }
+
+  function download(kind: keyof typeof EXPORT_FILES) {
+    if (!guard()) return;
+    const ok = downloadFile(kind, kind === "html" ? composed.html : composed.text);
+    if (ok) show("success", `A letöltés elindult: ${EXPORT_FILES[kind].name} (UTF-8).`);
+    else show("error", "A böngésző nem engedte a letöltést. Használja a másolást.");
   }
 
   function requestReset() {
-    setGuard(null);
-    if (draft.subjectEdited || draft.bodyEdited) {
-      setConfirmReset(true);
+    setManualCopy(null);
+    if (manualEdits === 0) {
+      show("success", "Nincs kézi tartalmi módosítás; a levél a központi alapváltozaton áll.");
       return;
     }
-    confirmResetNow();
+    setConfirmReset(true);
   }
 
   function confirmResetNow() {
-    dispatch({ type: "reset" });
+    dispatch({ type: "resetContent" });
     setConfirmReset(false);
-    show("success", "Alapsablon visszaállítva.");
+    show("success", "A tartalom a központi alapváltozatra állt vissza.");
     resetRef.current?.focus();
   }
 
@@ -131,78 +101,70 @@ export function EmailWorkbench() {
     resetRef.current?.focus();
   }
 
-  function refresh(field: TextField) {
-    dispatch({ type: "refresh", field });
-    fieldElement(field)?.focus();
-  }
-
-  function keep(field: TextField) {
-    dispatch({ type: "keep", field });
-    fieldElement(field)?.focus();
-  }
+  const sectionTitles = composed.doc.sections.map((s) => ({ letter: s.letter, title: s.title }));
 
   return (
     <div className={styles.wrap}>
       <header className={styles.header}>
-        <h1 className={styles.title}>Megkereső emailek</h1>
+        <h1 className={styles.title}>Hotel Villa Huber bemutató</h1>
         <p className={styles.lead}>
-          Belső, helyi használatú munkafelület: innen nem megy ki levél. A vázlat csak ennek a böngészőfülnek a memóriájában él, és
-          a lap bezárásakor elvész.
+          Belső, helyi használatú munkafelület az egyetlen aktív befektetői bemutató emailhez: innen nem megy ki levél. A vázlat csak ennek a böngészőfülnek a
+          memóriájában él, és a lap bezárásakor elvész.
         </p>
+        <p className={styles.baseUrl} data-testid="base-url">
+          A linkek alapcíme: <strong>{SITE_URL_CONFIG.url}</strong> ({SITE_URL_CONFIG.source === "env" ? "NEXT_PUBLIC_SITE_URL" : "alapérték"})
+        </p>
+        {SITE_URL_CONFIG.warning ? <p className="hvh-notice hvh-notice--danger">{SITE_URL_CONFIG.warning}</p> : null}
       </header>
 
       <div className={styles.grid}>
-        <div className={`${styles.controls} ${styles.panel}`}>
-          <TemplatePicker value={state.active} onChange={selectTemplate} />
-          <FieldsPanel
-            template={template}
-            values={state.values}
+        <div className={`${styles.areaFields} ${styles.panel}`}>
+          <PersonalPanel
+            personal={state.personal}
+            subject={state.subject}
+            preheader={state.preheader}
+            readiness={composed.readiness}
             attempted={attempted}
-            demo={state.demo}
-            onChange={changeValue}
-            onFillDemo={() => dispatch({ type: "fillDemo" })}
-            onClear={clearValues}
+            onPersonal={(field, value) => dispatch({ type: "setPersonal", field, value })}
+            onSubject={(value) => dispatch({ type: "setSubject", value })}
+            onPreheader={(value) => dispatch({ type: "setPreheader", value })}
           />
         </div>
 
-        <div className={`${styles.editorCol} ${styles.panel}`}>
-          <Editor
-            subject={draft.subject}
-            body={draft.body}
-            subjectEdited={draft.subjectEdited}
-            bodyEdited={draft.bodyEdited}
-            subjectSkipped={draft.subjectSkipped}
-            bodySkipped={draft.bodySkipped}
-            subjectRef={subjectRef}
-            bodyRef={bodyRef}
-            onEdit={(field, text) => dispatch({ type: "edit", field, text })}
-            onRefresh={refresh}
-            onKeep={keep}
-          />
-          <CopyBar
-            readiness={readiness}
-            guard={guardView}
-            feedback={feedback}
+        <div className={`${styles.areaActions} ${styles.panel}`}>
+          <ActionPanel
+            readiness={composed.readiness}
+            manualEdits={manualEdits}
             confirmReset={confirmReset}
-            guardRef={guardRef}
-            copySubjectRef={copySubjectRef}
-            copyBodyRef={copyBodyRef}
+            feedback={feedback}
+            manualCopy={manualCopy}
             resetRef={resetRef}
             cancelResetRef={cancelResetRef}
-            onCopy={copy}
-            onDismissGuard={() => {
-              const target = guard?.target;
-              setGuard(null);
-              (target === "body" ? copyBodyRef : copySubjectRef).current?.focus();
-            }}
+            onCopySubject={() => copy("tárgy", "A tárgy a vágólapon.", () => copyText(composed.subject), composed.subject)}
+            onCopyRich={() =>
+              copy("HTML-forrás", "A formázott levél a vágólapon (HTML + szöveg). A beillesztés levelezőnként eltérhet.", () => copyRichText(composed.html, composed.text), composed.html)
+            }
+            onCopyText={() => copy("szöveges levél", "A teljes szöveges levél a vágólapon.", () => copyText(composed.text), composed.text)}
+            onDownloadHtml={() => download("html")}
+            onDownloadText={() => download("text")}
             onResetRequest={requestReset}
             onResetConfirm={confirmResetNow}
             onResetCancel={cancelReset}
+            onCloseManual={() => setManualCopy(null)}
           />
         </div>
 
-        <div className={`${styles.previewCol} ${styles.panel}`}>
-          <Preview subject={draft.subject} body={draft.body} placeholders={readiness.placeholders} />
+        <div className={`${styles.areaPreview} ${styles.panel}`}>
+          <PreviewPane html={composed.html} size={size} ready={composed.readiness.ready} onSize={setSize} />
+        </div>
+
+        <div className={`${styles.areaSections} ${styles.panel}`}>
+          <SectionsEditor
+            fields={composed.fields}
+            sectionTitles={sectionTitles}
+            onEdit={(field: EditableField, value: string) => dispatch({ type: "setOverride", key: field.key, value, base: field.base })}
+            onRestore={(key) => dispatch({ type: "clearOverride", key })}
+          />
         </div>
       </div>
     </div>

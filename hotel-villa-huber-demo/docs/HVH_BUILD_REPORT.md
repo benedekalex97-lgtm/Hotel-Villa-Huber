@@ -16,7 +16,7 @@
 | `/foglalas` | Végigkattintható foglalási **demó**: időpont → vendégek → elérhetőség és elhelyezés (mintaadat) → vendégadatok → összesítő → „Demó befejezése” | nyilvános |
 | `/elado-hotel` | Teljes vevői tájékoztató A–L szekciókkal és ajánlatkérővel | nyilvános |
 | `/api/ajanlatkeres` | Szerveroldali ajánlatkérő-végpont | csak Node-hosztingon; a statikus Pages-kiadásban nincs |
-| `/munka/email`, `/munka/brand` | Belső emailsablon-szerkesztő és brand board | csak helyben vagy belső buildben; a nyilvános kiadásban nincs |
+| `/munka/email`, `/munka/brand` | Belső „Hotel Villa Huber bemutató” email-szerkesztő (egyetlen aktív sablon; a három régi megkereső sablon archivált, lásd `HVH_EMAIL_TEMPLATE.md`) és brand board | csak helyben vagy belső buildben; a nyilvános kiadásban nincs |
 
 ### Az eladási landing (`/elado-hotel`) szekciói
 
@@ -97,6 +97,16 @@ Felépítés (`src/features/booking/`):
 
 **Pull request és merge:** a repóban nincs alapág (`main`). Ennek létrehozását a munkakörnyezet letiltotta, ezért PR nem nyílt. A production a tesztelt munkaágból fut, merge nem szükséges.
 
+## Befektetői bemutató email (2026-10-01, belső)
+
+Részletes dokumentáció: `docs/HVH_EMAIL_TEMPLATE.md`. Összefoglaló:
+
+- **Egy aktív sablon:** „Hotel Villa Huber bemutató” — az A–L landing teljes információtartalma emailben (HTML + plain text), a központi tartalmi modulokból, állapotcímkékkel; a három régi megkereső sablon archivált.
+- **Belső szerkesztő** (`/munka/email`): címzett/feladó külön mezők, opcionális személyes bevezető, szerkeszthető tárgy, preheader és szekciószövegek, desktop/mobil HTML-előnézet (az exporttal azonos HTML), tárgy/formázott/szöveges másolás, HTML és TXT letöltés (UTF-8), megerősített visszaállítás; hiányos levél nem exportálható. Nincs küldés, nincs szerveres vázlat.
+- **Publikus változás:** csak a jelmagyarázat-szövegek áthelyezése `SalePage.tsx`-ből a `property.ts`-be (a landing kimenete azonos); a horgony (`#ajanlatkeres`) már létezett. Nincs új publikus útvonal; a `/munka/*` productionban továbbra is 404, a szivárgásellenőrzés az új szövegekre is kiterjed.
+- **Alapcím:** `NEXT_PUBLIC_SITE_URL` (validált; alapérték a jelenlegi production URL).
+- **Nem tesztelt:** valódi levelezőkliens (Gmail/Outlook), a production képek élő elérése ebből a környezetből.
+
 ## Indítás helyben
 
 ```bash
@@ -113,7 +123,7 @@ npm run build:pages && node scripts/serve-static.mjs 3200   # Pages-kiadás: htt
 | Ellenőrzés | Eredmény |
 |---|---|
 | `npm run typecheck`, `npm run lint` | hibátlan (helyben és CI-ban) |
-| `npm test` (vitest) | 7 fájl, 51 teszt — sikeres (helyben és CI-ban) |
+| `npm test` (vitest) | 7 fájl, 51 teszt — sikeres (helyben és CI-ban) a v2.1 kiadáskor; az email-átalakítás után 9 fájl, 95 teszt — sikeres (helyben) |
 | `npm run build:public` + `verify:public` | sikeres; Node-kiadás: `/`, `/foglalas`, `/elado-hotel`, `/api/ajanlatkeres`, proxy |
 | `npm run build:internal` | sikeres; `/munka/email`, `/munka/brand` |
 | `npm run build:pages` + `verify:pages` | sikeres; statikus oldalak: `/`, `/foglalas/`, `/elado-hotel/`, 404; `/munka` és API nincs |

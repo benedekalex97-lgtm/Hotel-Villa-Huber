@@ -1,151 +1,140 @@
+import { existsSync } from "node:fs";
+import { join } from "node:path";
 import { describe, expect, it } from "vitest";
-import { PROPERTY } from "@/content/property";
-import { articleAdjusted, articleFor, computeReadiness, findPlaceholders, missingRequired, renderTemplate } from "@/features/email/render";
-import { EMPTY_VALUES, TEMPLATES, getTemplate, usedVars, type Values } from "@/features/email/templates";
+import { collectLinks, collectTexts } from "@/features/email/document-text";
+import { esc } from "@/features/email/render-html";
+import { compose, htmlToText, norm } from "./helpers/email";
 
-// Az eredeti, jóváhagyott szövegek — betűre pontosan, a megbízásból másolva.
-const ORIGINAL = {
-  investor: {
-    subject: "Hotel Villa Huber – ausztriai szállodai befektetési lehetőség",
-    body: [
-      "Tisztelt [Név]!",
-      "",
-      "[Ajánló neve / korábbi beszélgetésünk / konkrét üzleti kapcsolódás] alapján keresem a karintiai Hotel Villa Huber értékesítésével kapcsolatban.",
-      "",
-      "A lehetőség olyan befektető számára lehet érdekes, aki ausztriai szállodai ingatlan vásárlásában gondolkodik, és a működtetést szakmai üzemeltetővel képzeli el. Az üzemeltető bevonása külön előkészítendő feladat.",
-      "",
-      "Érdekes lehet Önnek ez a befektetési irány? Ha igen, elküldöm a rövid bemutatót, majd egy 15 perces beszélgetésben egyeztethetjük az elképzeléseit.",
-      "",
-      "Üdvözlettel:",
-      "[Név]",
-      "[Telefonszám]",
-      "sale@hotelvillahuber.com",
-    ].join("\n"),
-  },
-  hotelier: {
-    subject: "Hotel Villa Huber – vásárlási lehetőség saját üzemeltetésre",
-    body: [
-      "Tisztelt [Név]!",
-      "",
-      "A [cégnév] [konkrét, ellenőrzött szakmai kapcsolódása] miatt keresem a karintiai Hotel Villa Huber értékesítésével kapcsolatban.",
-      "",
-      "A szállodát olyan szakmai vevőnek szeretnénk bemutatni, aki saját üzemeltetésű ausztriai egység vásárlását mérlegeli. Az első egyeztetésen azt tisztáznánk, hogy a ház mérete, elhelyezkedése és működési háttere illeszkedhet-e az Önök terveihez.",
-      "",
-      "Napirenden van Önöknél hasonló vásárlás? Ha igen, szívesen elküldöm a rövid bemutatót, és egyeztetek egy 15 perces telefonbeszélgetést.",
-      "",
-      "Üdvözlettel:",
-      "[Név]",
-      "[Telefonszám]",
-      "sale@hotelvillahuber.com",
-    ].join("\n"),
-  },
-  followup: {
-    subject: "Hotel Villa Huber – korábbi megkeresésem",
-    body: [
-      "Tisztelt [Név]!",
-      "",
-      "A Hotel Villa Huberrel kapcsolatos korábbi levelemre szeretnék röviden visszatérni.",
-      "",
-      "Aktuális lehet Önnek egy karintiai szállodai ingatlan vásárlásának megvizsgálása? Ha igen, elküldöm a rövid bemutatót, vagy egyeztethetünk egy rövid beszélgetést.",
-      "",
-      "Ha jelenleg nem aktuális, egy rövid visszajelzés is elegendő. Ha a cégnél más foglalkozik ilyen vásárlásokkal, köszönöm, ha megjelöli az illetékes kollégát.",
-      "",
-      "Üdvözlettel:",
-      "[Név]",
-      "[Telefonszám]",
-      "sale@hotelvillahuber.com",
-    ].join("\n"),
-  },
-} as const;
+const BASE = "https://hotel-villa-huber-hotel-villa-huber.vercel.app";
 
-const values = (patch: Partial<Values>): Values => ({ ...EMPTY_VALUES, ...patch });
+describe("HTML email", () => {
+  const { doc, html, text } = compose();
 
-describe("email sablonok", () => {
-  it("üres értékekkel pontosan az eredeti szöveget adják (helyőrzők megmaradnak)", () => {
-    for (const t of TEMPLATES) {
-      const out = renderTemplate(t, EMPTY_VALUES);
-      expect(out.subject).toBe(ORIGINAL[t.id].subject);
-      expect(out.body).toBe(ORIGINAL[t.id].body);
+  it("levelezőbarát váz: táblázatos, inline stílusok, UTF-8, 640 px, media query, szkript/flex/grid/webfont nélkül", () => {
+    expect(html.startsWith("<!DOCTYPE html>")).toBe(true);
+    expect(html).toContain('<html lang="hu"');
+    expect(html).toContain('<meta charset="utf-8">');
+    expect(html).toContain("max-width:640px");
+    expect(html).toContain('role="presentation"');
+    expect(html).toContain("@media only screen and (max-width:480px)");
+    expect(html).toContain("<!--[if mso]>");
+    expect(html).not.toMatch(/<script|display:\s*(flex|grid)|@import|@font-face|<link\b|url\(|<iframe|<form|javascript:/i);
+    expect(html).toMatch(/Georgia/);
+    expect(html).toMatch(/Segoe UI/);
+    expect(html).toContain("#2C4636"); // mély zöld
+    expect(html).toContain("#9B6B3A"); // bronz
+    expect(html).toContain("#F6F1E7"); // törtfehér
+    // A wordmark szöveges, nem csak kép.
+    expect(html).toContain("Villa Huber");
+  });
+
+  it("a képek abszolút, nyilvános https URL-ek, a manifestből, alt szöveggel, mérettel, létező fájlra mutatnak", () => {
+    const imgs = [...html.matchAll(/<img\b[^>]*>/g)].map((m) => m[0]);
+    expect(imgs.length).toBeGreaterThanOrEqual(5);
+    expect(imgs.length).toBeLessThanOrEqual(10);
+    for (const tag of imgs) {
+      const src = /src="([^"]+)"/.exec(tag)?.[1] ?? "";
+      expect(src).toMatch(new RegExp(`^${BASE}/media/booking-export/[\\w-]+\\.jpg$`));
+      expect(existsSync(join(__dirname, "../../public", src.replace(BASE, "")))).toBe(true);
+      expect(/alt="([^"]{20,})"/.test(tag)).toBe(true);
+      expect(tag).toMatch(/width="\d+"/);
+      expect(tag).not.toMatch(/height="/);
+    }
+    expect(html).not.toMatch(/localhost|drive\.google|src="\/|src="\.|src="data:/);
+  });
+
+  it("a hivatkozások valódi, abszolút HTML-linkek; a gombok <a> elemek; nincs követés vagy személyes paraméter", () => {
+    const hrefs = [...html.matchAll(/<a\b[^>]*href="([^"]+)"/g)].map((m) => m[1]);
+    expect(new Set(hrefs)).toEqual(new Set(collectLinks(doc)));
+    for (const href of hrefs) {
+      expect(href).toMatch(/^(https:\/\/[^\s?]+(#[\w-]+)?|mailto:sale@hotelvillahuber\.com)$/);
+    }
+    expect(html).not.toMatch(/utm_|\?[a-z]+=|tracking|pixel|width="1" height="1"/i);
+    expect(html).toMatch(new RegExp(`<a href="${BASE}/elado-hotel"[^>]*>Hotel részletes bemutatója</a>`));
+    expect(html).toMatch(new RegExp(`<a href="${BASE}/elado-hotel#ajanlatkeres"[^>]*>Egyeztetést vagy megtekintést kérek</a>`));
+    // Gombok alatt olvasható szöveges link is van.
+    expect(html).toContain(`>${BASE}/elado-hotel</a>`);
+    expect(html).toContain(`>${BASE}/elado-hotel#ajanlatkeres</a>`);
+    expect(html).toContain('href="mailto:sale@hotelvillahuber.com"');
+  });
+
+  it("a HTML és a plain text azonos információt és linkeket tartalmaz", () => {
+    const htmlPlain = norm(htmlToText(html));
+    const plain = norm(text);
+    const skipInText = new Set(["Tárgy", "Előnézeti szöveg"]);
+    for (const leaf of collectTexts(doc)) {
+      const needle = norm(leaf.text);
+      // A tárgy a HTML <title> elemében van (a törzs-szöveg kivonatban nem).
+      if (leaf.where !== "Tárgy") expect(htmlPlain, `HTML: ${leaf.where}: ${leaf.text}`).toContain(needle);
+      if (!skipInText.has(leaf.where)) expect(plain, `TXT: ${leaf.where}: ${leaf.text}`).toContain(needle);
+    }
+    for (const link of collectLinks(doc)) {
+      expect(html).toContain(link);
+      expect(text).toContain(link.replace("mailto:", ""));
+    }
+    // Minden állapotcímke ugyanannyiszor szerepel mindkét változatban.
+    for (const label of ["Korábbi nyilvános közlés — tulajdonosi megerősítésre vár", "Tulajdonosi közlés — dokumentummal még nem igazolt", "Egyeztetés tárgya"]) {
+      const inHtml = htmlToText(html).split(label).length - 1;
+      const inText = text.split(label).length - 1;
+      expect(inHtml, label).toBe(inText);
+      expect(inHtml, label).toBeGreaterThan(0);
     }
   });
 
-  it("a kapcsolati cím szó szerint sale@hotelvillahuber.com", () => {
-    expect(PROPERTY.contactEmail).toBe("sale@hotelvillahuber.com");
+  it("a plain text teljes, nem rövidített kivonat", () => {
+    expect(text.length).toBeGreaterThan(9000);
+    expect(text.split("\n").length).toBeGreaterThan(150);
+    expect(text).toContain("Tisztelt Minta Címzett!");
+    expect(text).toContain("Üdvözlettel:\nMinta Feladó\n+36 1 000 0000\nsale@hotelvillahuber.com");
   });
 
-  it("a mezőkonfiguráció egyezik a szegmensekben használt változókkal", () => {
-    for (const t of TEMPLATES) {
-      expect(t.fields.map((f) => f.var)).toEqual(usedVars(t));
+  it("magyar ékezetek UTF-8-ban sértetlenek", () => {
+    for (const out of [html, text]) {
+      const roundTrip = new TextDecoder("utf-8", { fatal: true }).decode(new TextEncoder().encode(out));
+      expect(roundTrip).toBe(out);
+      expect(out).toMatch(/ő/);
+      expect(out).toMatch(/ű/);
+      expect(out).not.toContain("�");
     }
   });
 
-  it("a címzett és az aláíró neve független", () => {
-    const out = renderTemplate(getTemplate("investor"), values({ recipientName: "Kiss Béla", senderName: "Nagy Anna" }));
-    const lines = out.body.split("\n");
-    expect(lines[0]).toBe("Tisztelt Kiss Béla!");
-    expect(lines[lines.length - 3]).toBe("Nagy Anna");
-    expect(out.body.match(/Kiss Béla/g)).toHaveLength(1);
-    expect(out.body.match(/Nagy Anna/g)).toHaveLength(1);
-    // Az üres telefon helyén a helyőrző marad, a másik név nem szivárog át.
-    expect(out.body).toContain("[Telefonszám]");
-    expect(out.body).not.toContain("[Név]");
+  it("az üres opcionális személyes bevezető nem hagy üres bekezdést, helyőrzőt vagy állítást", () => {
+    expect(html).not.toMatch(/<p[^>]*>\s*<\/p>/);
+    expect(text).not.toMatch(/\n\n\n/);
+    const filled = compose({ personalIntro: "Köszönöm, hogy időt szánt rám.\n\nÜdvözlettel később." });
+    expect(filled.html).toContain("Köszönöm, hogy időt szánt rám.");
+    expect(filled.text).toContain("Köszönöm, hogy időt szánt rám.\n\nÜdvözlettel később.");
+  });
+});
+
+describe("escape és nyers HTML tiltása", () => {
+  it("a személyes mezők és a szerkesztett szövegek HTML-escape-eltek", () => {
+    const hostile = `<script>alert(1)</script> & "x" 'y' <img src=x onerror=alert(1)>`;
+    const out = compose(
+      { recipientName: hostile, senderName: hostile, senderPhone: "<b>+36</b>", personalIntro: `<b>félkövér</b>\nsor` },
+      { overrides: { intro: `<a href="javascript:alert(1)">kattints</a>`, "B.fact.rooms": "<i>14</i>" }, subject: "<u>Tárgy</u> & más" },
+    );
+    expect(out.html).not.toMatch(/<script|<img src=x|<b>|<i>|<u>|<a href="javascript:/);
+    expect(out.html).toContain("&lt;script&gt;alert(1)&lt;/script&gt; &amp; &quot;x&quot; &#39;y&#39;");
+    expect(out.html).toContain("&lt;b&gt;félkövér&lt;/b&gt;<br>sor");
+    expect(out.html).toContain("<title>&lt;u&gt;Tárgy&lt;/u&gt; &amp; más</title>");
+    // A plain text nyers szöveg, a HTML nem.
+    expect(out.text).toContain("<b>félkövér</b>");
+    expect(esc(`<>&"'`)).toBe("&lt;&gt;&amp;&quot;&#39;");
   });
 
-  it("az értékek szó szerint, egyszer kerülnek be, és nem helyettesítődnek újra", () => {
-    const tricky = "$& [Név] {{x}} <b>";
-    const out = renderTemplate(getTemplate("investor"), values({ recipientName: tricky, connection: "$1 $$ $`" }));
-    expect(out.body.split(tricky)).toHaveLength(2); // pontosan egyszer
-    expect(out.body.startsWith(`Tisztelt ${tricky}!`)).toBe(true);
-    expect(out.body).toContain("$1 $$ $` alapján keresem");
-    // A beírt „[Név]” utólag sem cserélődik: az aláírás helyén továbbra is a saját helyőrzője áll.
-    expect(out.body).toContain("Üdvözlettel:\n[Név]\n[Telefonszám]");
+  it("a megszólítás sortörést tartalmazó névnél egy sorban marad", () => {
+    expect(compose({ recipientName: "Minta\nCímzett" }).doc.greeting).toBe("Tisztelt Minta Címzett!");
   });
+});
 
-  it("az értékek levágottak, a sortörések szóközzé alakulnak", () => {
-    const out = renderTemplate(getTemplate("followup"), values({ recipientName: "  Kiss\r\nBéla \n" }));
-    expect(out.body.startsWith("Tisztelt Kiss Béla!")).toBe(true);
-  });
-
-  it("a névelő a cégnévhez igazodik (A/Az)", () => {
-    const t = getTemplate("hotelier");
-    const body = (companyName: string) => renderTemplate(t, values({ companyName })).body;
-    expect(body("Accor")).toContain("\n\nAz Accor [konkrét");
-    expect(body("Minta Kft.")).toContain("\n\nA Minta Kft. [konkrét");
-    expect(body("Óbuda Hotel")).toContain("\n\nAz Óbuda Hotel [konkrét");
-    expect(body("őrségi Panzió")).toContain("\n\nAz őrségi Panzió [konkrét");
-    expect(body("")).toContain("\n\nA [cégnév] [konkrét");
-    expect(articleFor("Ünnep Zrt.")).toBe("Az");
-    expect(articleFor("  Hotel")).toBe("A");
-    expect(articleAdjusted(t, values({ companyName: "Accor" }))).toBe(true);
-    expect(articleAdjusted(t, values({ companyName: "Minta Kft." }))).toBe(false);
-    expect(articleAdjusted(getTemplate("investor"), values({ companyName: "Accor" }))).toBe(false);
-  });
-
-  it("a helyőrzők felismerhetők, kézzel szerkesztett szövegben is", () => {
-    expect(findPlaceholders("Tisztelt [Név]! Üdv, [Név] [Telefonszám]")).toEqual(["[Név]", "[Telefonszám]"]);
-    expect(findPlaceholders("nincs benne semmi")).toEqual([]);
-    expect(findPlaceholders("[nem\nlezárt]")).toEqual([]);
-  });
-
-  it("a készenléti állapot hamis, amíg bármilyen helyőrző marad", () => {
-    const t = getTemplate("followup");
-    const full = values({ recipientName: "Kiss Béla", senderName: "Nagy Anna", senderPhone: "+36 1 234 5678" });
-    const rendered = renderTemplate(t, full);
-    expect(computeReadiness(t, full, rendered.subject, rendered.body).ready).toBe(true);
-
-    // Kézzel szerkesztett szöveg, benne visszamaradt „[Név]”.
-    const edited = computeReadiness(t, full, rendered.subject, `${rendered.body}\nÜdv, [Név]`);
-    expect(edited.ready).toBe(false);
-    expect(edited.placeholders).toEqual(["[Név]"]);
-
-    // Hiányzó kötelező mező, még ha a szövegből a helyőrző kikerült is.
-    expect(computeReadiness(t, EMPTY_VALUES, "Tárgy", "Szöveg").ready).toBe(false);
-    expect(missingRequired(t, EMPTY_VALUES)).toEqual(["recipientName", "senderName", "senderPhone"]);
-  });
-
-  it("a nem használt mezők értéke nem szivárog a levélbe", () => {
-    const out = renderTemplate(getTemplate("followup"), values({ companyName: "Titkos Kft.", connection: "Titkos kapcsolat" }));
-    expect(out.subject + out.body).not.toContain("Titkos");
-    expect(missingRequired(getTemplate("followup"), EMPTY_VALUES)).not.toContain("companyName");
+describe("konfigurálható alapcím", () => {
+  it("más alapcímnél minden link és kép az új alapcímet használja", () => {
+    const next = "https://hotel.example.hu";
+    const out = compose({}, {}, next);
+    expect(out.html).not.toContain("vercel.app");
+    expect(out.text).not.toContain("vercel.app");
+    expect(out.html).toContain(`${next}/elado-hotel#ajanlatkeres`);
+    for (const m of out.html.matchAll(/<img\b[^>]*src="([^"]+)"/g)) expect(m[1]).toMatch(/^https:\/\/hotel\.example\.hu\/media\//);
   });
 });

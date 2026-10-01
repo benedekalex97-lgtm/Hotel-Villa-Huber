@@ -2,7 +2,7 @@ import Link from "next/link";
 import { MediaImage } from "@/components/media/MediaImage";
 import { GALLERY, MEDIA_SLOTS, getMedia, getSlot } from "@/content/media";
 import { ACCOMMODATION, AREA_HIGHLIGHTS, GUEST_SERVICES } from "@/content/guest";
-import { FACT_STATUS_PUBLIC_LABEL, publicFactView } from "@/content/property";
+import { FACT_STATUS_EXPLANATION, FACT_STATUS_ORDER, FACT_STATUS_PUBLIC_LABEL, publicFactView } from "@/content/property";
 import type { PublicFactId } from "@/content/property";
 import {
   AUDIENCES,
@@ -20,7 +20,6 @@ import {
   VIEWING,
 } from "@/content/sales";
 import { HOME_SECTIONS, ROUTES, SALE_SECTIONS } from "@/content/site";
-import type { FactStatus } from "@/content/types";
 import type { DeliveryMode } from "@/features/inquiry/delivery";
 import { InquiryForm } from "./InquiryForm";
 import { StatusBadge } from "./StatusBadge";
@@ -44,15 +43,6 @@ const SECTION_INDEX: readonly { id: string; label: string }[] = [
   { id: SALE_SECTIONS.process, label: "Folyamat" },
   { id: SALE_SECTIONS.inquiry, label: "Ajánlatkérés" },
 ];
-
-const STATUS_ORDER: readonly FactStatus[] = ["jovahagyott", "nyilvanos-megerositendo", "tulajdonosi-kozles", "ismeretlen"];
-
-const STATUS_EXPLANATION: Record<FactStatus, string> = {
-  jovahagyott: "A projekt elfogadott anyagaiban rögzített adat.",
-  "nyilvanos-megerositendo": "Korábbi nyilvános anyagból származik; a tulajdonos még nem erősítette meg.",
-  "tulajdonosi-kozles": "A tulajdonos közölte, dokumentum még nem igazolja.",
-  ismeretlen: "Nincs megbízható adat; az egyeztetés során tisztázzuk.",
-};
 
 function SectionHead({ id, eyebrow, title, lead }: { id: string; eyebrow: string; title: string; lead?: string }) {
   return (
@@ -155,10 +145,10 @@ export function SalePage({ deliveryMode }: { deliveryMode: DeliveryMode }) {
           <div className={styles.legend}>
             <h3 className={styles.legendTitle}>Állapotjelölések</h3>
             <ul className={styles.legendList}>
-              {STATUS_ORDER.map((status) => (
+              {FACT_STATUS_ORDER.map((status) => (
                 <li key={status}>
                   <StatusBadge status={status} label={FACT_STATUS_PUBLIC_LABEL[status]} />
-                  <span>{STATUS_EXPLANATION[status]}</span>
+                  <span>{FACT_STATUS_EXPLANATION[status]}</span>
                 </li>
               ))}
             </ul>
