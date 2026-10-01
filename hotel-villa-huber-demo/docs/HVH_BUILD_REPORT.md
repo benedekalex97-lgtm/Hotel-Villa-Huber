@@ -82,7 +82,8 @@ Felépítés (`src/features/booking/`):
   2. statikus build (`HVH_STATIC_EXPORT=1`, basePath `/Hotel-Villa-Huber`);
   3. szivárgásellenőrzés;
   4. e2e a statikus csomagon, Pages-szerű kiszolgálóval;
-  5. feltöltés és deploy.
+  5. feltöltés és deploy;
+  6. deploy után a nyilvános e2e-tesztek a ténylegesen kiadott production URL-en is lefutnak (`verify-production` job). A munkakörnyezetből a github.io nem érhető el, ezért ez az ellenőrzés a CI-ban történik.
 - **A kiadásba nem kerül be:** `/munka/*`, az API, a proxy, a belső díjak, az árak és a közvetítői adatok. Ezt a build szintje és a `verify:pages` ellenőrzés is garantálja.
 
 **Blokkoló, ami a production URL-t még megakadályozza:**

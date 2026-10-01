@@ -59,9 +59,31 @@ jobs:
   deploy:
     needs: build
     runs-on: ubuntu-latest
+    outputs:
+      page_url: ${{ steps.deployment.outputs.page_url }}
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - id: deployment
         uses: actions/deploy-pages@v4
+
+  # A ténylegesen kiadott production URL ellenőrzése (oldalak, foglalási demó, landing, /munka → 404).
+  verify-production:
+    needs: deploy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: hotel-villa-huber-demo/package-lock.json
+      - run: npm ci
+      - name: E2E a production URL-en
+        env:
+          PAGE_URL: ${{ needs.deploy.outputs.page_url }}
+        run: |
+          npx playwright install --with-deps chromium
+          for i in 1 2 3 4 5 6; do curl -fsS -o /dev/null "$PAGE_URL" && break; sleep 10; done
+          E2E_BASE_URL="$PAGE_URL" E2E_STATIC=1 npx playwright test
