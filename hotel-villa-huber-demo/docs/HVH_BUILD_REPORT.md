@@ -121,7 +121,7 @@ npm run build:pages && node scripts/serve-static.mjs 3200   # Pages-kiadás: htt
 | Playwright, statikus Pages-kiadás basePath alatt (helyben és CI-ban) | 23/23 sikeres |
 | Ajánlatkérő szerveres mód (mock elfogadás, mock hiba, valódi elérhetetlen webhook) | elfogadásnál siker, hibánál hibaüzenet és mailto-alternatíva |
 | Vízszintes túlcsordulás: `/`, `/foglalas`, `/elado-hotel`, `/munka/email` × 390 és 1440 px | 0 px |
-| Production URL ellenőrzése | **nem futott** — a Pages még nincs bekapcsolva (lásd a blokkolót) |
+| Production URL (Vercel) ellenőrzése | a munkakörnyezetből nem elérhető; a felhasználó megnyitotta. Ugyanebből a commitból készült Node-build helyben: 26/26 e2e |
 
 Mit fednek le a tesztek:
 
