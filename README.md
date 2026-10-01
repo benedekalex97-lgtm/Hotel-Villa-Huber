@@ -9,7 +9,7 @@ A Hotel Villa Huber (Afritz am See, Karintia) weboldala:
 
 A projekt a [`hotel-villa-huber-demo/`](hotel-villa-huber-demo/) mappában van (Next.js + TypeScript).
 
-Production-kiadás: GitHub Pages a [`.github/workflows/pages.yml`](.github/workflows/pages.yml) workflow-val. Cím: https://benedekalex97-lgtm.github.io/Hotel-Villa-Huber/ — ehhez a repó Settings → Pages → Source beállításának „GitHub Actions”-nek kell lennie.
+Production: **https://hotel-villa-huber-hotel-villa-huber.vercel.app** (Vercel, a gyökérkönyvtár `hotel-villa-huber-demo`). Tartalék statikus kiadás: GitHub Pages, kézi workflow-val.
 
 ```bash
 cd hotel-villa-huber-demo

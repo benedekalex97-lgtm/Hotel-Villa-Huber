@@ -1,11 +1,9 @@
-name: Production — GitHub Pages
+name: Tartalék kiadás — GitHub Pages
 
-# A Hotel Villa Huber nyilvános kiadása: /, /foglalas, /elado-hotel (statikus export).
+# Tartalék statikus kiadás (/, /foglalas, /elado-hotel). A production a Vercelen fut,
+# ezért ez csak kézzel indítható; előfeltétel: Settings → Pages → Source: GitHub Actions.
 # A belső /munka/* felület és az API ebben a kiadásban nem épül be.
 on:
-  push:
-    branches: ["claude/hotel-villa-huber-demo-qqrcvp"]
-    paths: ["hotel-villa-huber-demo/**", ".github/workflows/pages.yml"]
   workflow_dispatch:
 
 permissions:

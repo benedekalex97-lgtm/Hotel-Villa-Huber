@@ -6,7 +6,7 @@
 
 - **Útvonalak:** három nyilvános útvonal (`/`, `/foglalas`, `/elado-hotel`) és két belső (`/munka/email`, `/munka/brand`).
 - **Ellenőrzések:** minden lefuttatott ellenőrzés sikeres. Ide tartozik a GitHub Actions CI is: typecheck, lint, egységtesztek, statikus build, szivárgásellenőrzés és 23/23 e2e.
-- **Production:** a kiadás egy repóbeállításon áll. Be kell kapcsolni a GitHub Pages-t (Source: GitHub Actions), és újra kell futtatni a workflow-t. Részletek lent, a „Production-kiadás” részben.
+- **Production:** él a Vercelen: https://hotel-villa-huber-hotel-villa-huber.vercel.app (commit `a123dcd`).
 
 ## Mi készült
 
@@ -73,38 +73,29 @@ Felépítés (`src/features/booking/`):
   3. **Új build.** A mód buildkor dől el az `/elado-hotel` oldalon.
   4. **Postafiók-ellenőrzés.** Meg kell erősíteni, hogy a `sale@hotelvillahuber.com` postafiók létezik és fogad levelet.
 
-## Production-kiadás
+## Production-kiadás — Vercel (él)
 
-**Választott hoszting: GitHub Pages.** A repó nyilvános, a Pages ingyenes, és a meglévő jogosultságokkal elérhető. URL a bekapcsolás után: **https://benedekalex97-lgtm.github.io/Hotel-Villa-Huber/**
+| | |
+|---|---|
+| Production URL | **https://hotel-villa-huber-hotel-villa-huber.vercel.app** |
+| Vercel-projekt | `hotel-villa-huber-hotel-villa-huber-demo` (team: benedekalex97-lgtm), Next.js, gyökérkönyvtár `hotel-villa-huber-demo` |
+| Telepített commit | `a123dcd` (ág: `claude/hotel-villa-huber-demo-qqrcvp`), target: production, állapot: READY |
+| Létrehozta | a felhasználó, Vercel-importtal, 2026-10-01 |
+| Kiadási mód | publikus Node-build (`next build`): `/`, `/foglalas`, `/elado-hotel`, `/api/ajanlatkeres`, proxy. `/munka/*` nincs a buildben |
+| Hozzáférés | A Vercel Authentication a projektben „all_except_custom_domains” volt, vagyis a vercel.app production címet is védte. 2026-10-01-én „csak preview”-ra állítva: a production nyilvános, a preview-k védettek |
+| Ajánlatkérő | mailto-mód (nincs provider-env); a `/api/ajanlatkeres` „not_configured” választ ad |
 
-- **Workflow:** `.github/workflows/pages.yml`. Pushra fut a munkaágon, vagy kézzel indítható. Lépései:
-  1. typecheck, lint és egységtesztek;
-  2. statikus build (`HVH_STATIC_EXPORT=1`, basePath `/Hotel-Villa-Huber`);
-  3. szivárgásellenőrzés;
-  4. e2e a statikus csomagon, Pages-szerű kiszolgálóval;
-  5. feltöltés és deploy;
-  6. deploy után a nyilvános e2e-tesztek a ténylegesen kiadott production URL-en is lefutnak (`verify-production` job). A munkakörnyezetből a github.io nem érhető el, ezért ez az ellenőrzés a CI-ban történik.
-- **A kiadásba nem kerül be:** `/munka/*`, az API, a proxy, a belső díjak, az árak és a közvetítői adatok. Ezt a build szintje és a `verify:pages` ellenőrzés is garantálja.
+**Ellenőrzés.**
 
-**Blokkoló, ami a production URL-t még megakadályozza:**
+- Helyben, ugyanebből a commitból készült publikus Node-buildre lefutott: a szivárgásellenőrzés, valamint az e2e-tesztek (26/26, benne `/munka/email` → 404).
+- A production URL-t a munkakörnyezetből nem lehetett megnyitni: a proxy tiltja a vercel.app-ot, a Vercel-connector pedig nem éri el a deploymentet. A felhasználó böngészőben megnyitotta.
+- Javasolt kézi gyorsellenőrzés kijelentkezett böngészőben (privát ablak):
+  - `/`, `/foglalas`, `/elado-hotel` betölt;
+  - a `/munka/email` 404-et ad.
 
-- **GitHub Pages nincs bekapcsolva a repóban.** A workflow `GITHUB_TOKEN`-je nem hozhatja létre a Pages-oldalt („Create Pages site failed — Resource not accessible by integration”, run #1, 2026-10-01 05:22 UTC). A munkakörnyezet proxyja a Pages API-t tiltja.
-- **Teendő (egyszeri, kb. 1 perc):**
-  1. GitHub → Hotel-Villa-Huber → Settings → Pages → Build and deployment → Source: **GitHub Actions**.
-  2. Actions → „Production — GitHub Pages” → Run workflow (ág: `claude/hotel-villa-huber-demo-qqrcvp`), vagy a legutóbbi futás újraindítása.
-  3. Ha a Settings → Environments → `github-pages` környezet ágkorlátozást kér, engedélyezni kell rajta a `claude/hotel-villa-huber-demo-qqrcvp` ágat.
+**Tartalék:** a GitHub Pages workflow (`.github/workflows/pages.yml`) csak kézzel indítható. Előfeltétele a Settings → Pages → Source: „GitHub Actions” beállítás.
 
-**Vercel (nem sikerült):**
-
-- A Vercel-connector a csapatban nem hozhat létre projektet („You don't have permission to create the project”, 403). Git-alapú deploymenttel sem: „You don't have permission to create a project”.
-- A Vercel API a munkakörnyezetből hálózatilag nem érhető el.
-- Meglévő, más ügyfélhez tartozó Vercel-projektet szándékosan nem használtunk.
-
-**Pull request és merge:**
-
-- A repóban csak a munkaág létezik (ez az alapértelmezett ág); `main` vagy más alapág nincs, ezért PR nem nyitható.
-- A `main` ág létrehozását (orphan commitból, illetve az első commitra mutató push-sal) a munkakörnyezet biztonsági szabálya romboló git-műveletként letiltotta.
-- Megoldás: a felhasználó létrehoz egy alapágat (pl. `main` a c528551 commitból), ezután a PR megnyitható. A Pages-kiadáshoz merge nem szükséges, mert a workflow a tesztelt munkaágból dolgozik.
+**Pull request és merge:** a repóban nincs alapág (`main`). Ennek létrehozását a munkakörnyezet letiltotta, ezért PR nem nyílt. A production a tesztelt munkaágból fut, merge nem szükséges.
 
 ## Indítás helyben
 
@@ -156,7 +147,6 @@ Nem futott:
 
 ## Valódi hiányok
 
-- **Production:** a GitHub Pages bekapcsolása (felhasználói beállítás, lásd fent).
 - **PR:** alapág hiányzik (lásd fent).
 - **Ajánlatkérő:** szerveres küldéshez Node-hoszt, provider-kulcs és hitelesített feladó kell; a `sale@` postafiók működése nincs ellenőrizve.
 - **Vendégkapcsolat:** nincs megerősített vendégkapcsolati email vagy telefonszám. A `NEXT_PUBLIC_GUEST_EMAIL` és `NEXT_PUBLIC_GUEST_PHONE` változóval adható meg; addig az oldal ezt semlegesen jelzi.
