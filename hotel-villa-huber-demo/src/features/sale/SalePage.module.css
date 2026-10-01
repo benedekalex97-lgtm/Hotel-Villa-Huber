@@ -422,31 +422,6 @@
 }
 
 /* — E) Működés — */
-.twoCol {
-  display: grid;
-  gap: var(--hvh-space-5);
-}
-.clarify {
-  display: grid;
-  gap: var(--hvh-space-3);
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-.clarify li {
-  position: relative;
-  padding-left: 1.5rem;
-}
-.clarify li::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 0.35em;
-  width: 0.75rem;
-  height: 0.75rem;
-  border: 1px dashed var(--hvh-line-strong);
-  border-radius: 50%;
-}
 .direction {
   display: grid;
   gap: var(--hvh-space-3);
@@ -658,10 +633,6 @@
   }
   .stepNumber {
     left: 0;
-  }
-  .twoCol {
-    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
-    align-items: start;
   }
 }
 

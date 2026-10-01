@@ -144,17 +144,9 @@ export const OPEN_DATA_TOPICS: readonly { title: string; detail: string }[] = [
   { title: "Engedélyek és hasznosítás", detail: "Használatbavételi engedély, övezeti besorolás és a településen hatályos beépítési szabályok." },
 ];
 
-/** Működési háttér — ismert és tisztázandó elemek. */
+/** Publikus működési háttér. A tulajdonosi adatbekérés külön belső modulban van. */
 export const OPERATIONS = {
   knownFactIds: ["operated-summer-2026", "reviews", "operator"],
-  toClarify: [
-    "A 2026-os szezon időszaka, üzemeltetési formája és személyzete",
-    "Árbevétel és költségek, az elmúlt évek eredménye",
-    "Kihasználtság havi bontásban",
-    "Élő szerződések (szállítók, karbantartás, biztosítás) és átvállalandó kötelezettségek",
-    "Átadható leltár: bútorzat, konyhatechnológia, wellness-gépészet, textil",
-    "Márkanév, domain, weboldal és szálláshely-portál fiókok átadhatósága",
-  ],
 } as const;
 
 /** Lehetséges hasznosítási irány — nem igazolt üzleti vagy jogi lehetőség. */
