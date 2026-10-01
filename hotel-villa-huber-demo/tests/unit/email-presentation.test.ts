@@ -111,13 +111,13 @@ describe("bemutató email — A–L megfeleltetés", () => {
     expect(all).not.toMatch(/\bperc\b.*(autó|sípálya)|ski-?in|ski-?out|lift/);
   });
 
-  it("E) 2026-os működés, üzemeltető, tisztázandó, lehetséges irány", () => {
+  it("E) 2026-os működés, üzemeltető, lehetséges irány (a landinggel azonos tartalom)", () => {
     OPERATIONS.knownFactIds.forEach((id) => {
       const view = publicFactView(id);
       has(view.value);
       has(view.statusLabel);
     });
-    OPERATIONS.toClarify.forEach(has);
+    has("A működésről jelenleg rendelkezésre álló információk.");
     has(POSSIBLE_DIRECTIONS.title);
     has(POSSIBLE_DIRECTIONS.text);
     has("Lehetséges irány, nem ígéret");

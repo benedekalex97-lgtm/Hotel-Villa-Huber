@@ -260,11 +260,9 @@ export function buildDocument(input: BuildInput): BuildResult {
 
   // — E) Működési és átadási háttér —
   const sectionE = section("E", SALE_SECTIONS.operations, "Működés", "Működés és üzemeltetési háttér", () => [
-    lead("E", "Amit a működésről jelenleg tudunk, és amit még tisztázni kell."),
+    lead("E", "A működésről jelenleg rendelkezésre álló információk."),
     { kind: "subheading", text: "Amit jelenleg tudunk" },
     { kind: "facts", rows: OPERATIONS.knownFactIds.map((id) => factRow(id, `E.fact.${id}`)) },
-    { kind: "subheading", text: "Tisztázandó" },
-    { kind: "bullets", items: OPERATIONS.toClarify.map((item, i) => t(`E.clarify.${i}`, `Tisztázandó ${i + 1}`, item, true)) },
     {
       kind: "notice",
       tone: "info",

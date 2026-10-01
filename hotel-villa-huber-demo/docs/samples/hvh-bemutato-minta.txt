@@ -191,7 +191,7 @@ MŰKÖDÉS
 Működés és üzemeltetési háttér
 ============================================================
 
-Amit a működésről jelenleg tudunk, és amit még tisztázni kell.
+A működésről jelenleg rendelkezésre álló információk.
 
 Amit jelenleg tudunk
 --------------------
@@ -202,16 +202,6 @@ Amit jelenleg tudunk
   Állapot: Korábbi nyilvános közlés — tulajdonosi megerősítésre vár
 - Üzemeltetői partner: Leszerződött üzemeltető jelenleg nincs; a partnerkeresés előkészítés alatt áll.
   Állapot: Megerősített
-
-Tisztázandó
------------
-
-- A 2026-os szezon időszaka, üzemeltetési formája és személyzete
-- Árbevétel és költségek, az elmúlt évek eredménye
-- Kihasználtság havi bontásban
-- Élő szerződések (szállítók, karbantartás, biztosítás) és átvállalandó kötelezettségek
-- Átadható leltár: bútorzat, konyhatechnológia, wellness-gépészet, textil
-- Márkanév, domain, weboldal és szálláshely-portál fiókok átadhatósága
 
 Lehetséges irány, nem ígéret
 Lehetséges irány: közösségi és retreat-hasznosítás
