@@ -243,7 +243,7 @@ export default function BrandBoardPage() {
           Mobil és mozgás
         </h2>
         <ul className={styles.rules}>
-          <li>Töréspontok: 390 px mobil · 768 px tablet · 960 px fejléc-navigáció · 1440 px desktop.</li>
+          <li>Töréspontok: 390 px mobil · 768 px tablet · 1240 px fejléc-navigáció (8 menüpont) · 1440 px desktop.</li>
           <li>Érintési cél ≥ 44 px; input betűméret 16 px (iOS nem nagyít).</li>
           <li>Nincs vízszintes túlcsordulás; a képek és táblák a konténerben maradnak.</li>
           <li>Mozgás: csak 180 ms-os színátmenet; prefers-reduced-motion esetén kikapcsol. Nincs automatikus hang, scroll hijack vagy dekoratív 3D.</li>

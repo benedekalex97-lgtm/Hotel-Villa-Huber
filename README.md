@@ -1,12 +1,15 @@
 # Hotel Villa Huber
 
-Magyar nyelvű demó a 2026. október 1-jei tulajdonosi tárgyalásra:
+A Hotel Villa Huber (Afritz am See, Karintia) weboldala:
 
-- hotelbemutató weboldal: `/`;
-- értékesítési landing: `/elado-hotel`;
-- belső emailsablon-szerkesztő: `/munka/email`, csak helyben.
+- `/` — vendégeknek szóló hotelweboldal;
+- `/foglalas` — bemutató foglalási folyamat (valódi foglalás nem történik);
+- `/elado-hotel` — teljes eladási tájékoztató ajánlatkérővel;
+- `/munka/email` — belső emailsablon-szerkesztő, csak helyben.
 
 A projekt a [`hotel-villa-huber-demo/`](hotel-villa-huber-demo/) mappában van (Next.js + TypeScript).
+
+Production-kiadás: GitHub Pages a [`.github/workflows/pages.yml`](.github/workflows/pages.yml) workflow-val. Cím: https://benedekalex97-lgtm.github.io/Hotel-Villa-Huber/ — ehhez a repó Settings → Pages → Source beállításának „GitHub Actions”-nek kell lennie.
 
 ```bash
 cd hotel-villa-huber-demo

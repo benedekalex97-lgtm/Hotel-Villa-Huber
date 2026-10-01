@@ -1,15 +1,17 @@
 // Tárgyalási screenshotok: három útvonal × mobil (390) és desktop (1440), teljes oldal.
-// Használat: node scripts/screenshots.mjs [publicBase=http://localhost:3100] [internalBase=http://localhost:3101] [outDir=docs/screenshots]
+// Használat: node scripts/screenshots.mjs [publicBase=http://localhost:3200/Hotel-Villa-Huber] [internalBase=http://localhost:3101] [outDir=docs/screenshots]
 import { chromium } from "@playwright/test";
 import { mkdirSync } from "node:fs";
 
-const [, , publicBase = "http://localhost:3100", internalBase = "http://localhost:3101", outDir = "docs/screenshots"] = process.argv;
+const [, , publicBase = "http://localhost:3200/Hotel-Villa-Huber", internalBase = "http://localhost:3101", outDir = "docs/screenshots"] = process.argv;
+const iso = (days) => new Date(Date.now() + days * 864e5).toISOString().slice(0, 10);
 mkdirSync(outDir, { recursive: true });
 
 const targets = [
   { name: "01-fooldal", url: `${publicBase}/` },
-  { name: "02-elado-hotel", url: `${publicBase}/elado-hotel` },
-  { name: "03-munka-email", url: `${internalBase}/munka/email`, demoFill: true },
+  { name: "02-foglalas-elerhetoseg", url: `${publicBase}/foglalas/?erkezes=${iso(40)}&tavozas=${iso(43)}&felnott=2&gyermek=1&szoba=1` },
+  { name: "03-elado-hotel", url: `${publicBase}/elado-hotel/` },
+  { name: "04-munka-email-belso", url: `${internalBase}/munka/email`, demoFill: true },
 ];
 const viewports = [
   { name: "mobil-390", width: 390, height: 844, deviceScaleFactor: 2 },
@@ -22,6 +24,7 @@ for (const vp of viewports) {
   for (const t of targets) {
     const page = await context.newPage();
     await page.goto(t.url, { waitUntil: "networkidle" });
+    await page.waitForTimeout(1200); // foglalási demó: a minta-elérhetőség betöltése
     if (t.demoFill) {
       const btn = page.getByRole("button", { name: /Demó kitöltés/i });
       if (await btn.count()) await btn.first().click();

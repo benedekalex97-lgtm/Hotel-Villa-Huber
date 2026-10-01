@@ -1,119 +1,164 @@
-# Hotel Villa Huber demó — build riport
+# Hotel Villa Huber — build riport (v2.1)
 
-Állapot: 2026-10-01 · v0.1 · a 2026. október 1-jei tulajdonosi tárgyalásra.
+Állapot: 2026-10-01 · ág: `claude/hotel-villa-huber-demo-qqrcvp`
+
+## Röviden
+
+- **Útvonalak:** három nyilvános útvonal (`/`, `/foglalas`, `/elado-hotel`) és két belső (`/munka/email`, `/munka/brand`).
+- **Ellenőrzések:** minden lefuttatott ellenőrzés sikeres. Ide tartozik a GitHub Actions CI is: typecheck, lint, egységtesztek, statikus build, szivárgásellenőrzés és 23/23 e2e.
+- **Production:** a kiadás egy repóbeállításon áll. Be kell kapcsolni a GitHub Pages-t (Source: GitHub Actions), és újra kell futtatni a workflow-t. Részletek lent, a „Production-kiadás” részben.
 
 ## Mi készült
 
-| Útvonal | Tartalom | Elérhetőség |
+| Útvonal | Tartalom | Kiadás |
 |---|---|---|
-| `/` | Magyar hotelbemutató: hero, A villa, galéria (8 kép, lightbox), elhelyezkedés, értékesítési átvezetés, kapcsolat | publikus |
-| `/elado-hotel` | Értékesítési landing: ingatlanbemutató, négy célcsoport, két vásárlási út, első egyeztetés, következő lépések, mailto-alapú kapcsolatfelvétel | publikus |
-| `/munka/email` | Belső sablonszerkesztő a három jóváhagyott levélhez | csak helyben: `npm run dev` vagy belső build |
-| `/munka/brand` | Élő brand board | csak helyben: mint fent |
+| `/` | Vendégeknek szóló hotelweboldal: hero, a hotel, szobák (valódi képek, nem hivatalos kategóriák), élmények és szolgáltatások, 12 képes galéria lightboxszal, környék, foglalási widget, diszkrét átvezetés az eladási oldalra, kapcsolat | nyilvános |
+| `/foglalas` | Végigkattintható foglalási **demó**: időpont → vendégek → elérhetőség és elhelyezés (mintaadat) → vendégadatok → összesítő → „Demó befejezése” | nyilvános |
+| `/elado-hotel` | Teljes vevői tájékoztató A–L szekciókkal és ajánlatkérővel | nyilvános |
+| `/api/ajanlatkeres` | Szerveroldali ajánlatkérő-végpont | csak Node-hosztingon; a statikus Pages-kiadásban nincs |
+| `/munka/email`, `/munka/brand` | Belső emailsablon-szerkesztő és brand board | csak helyben vagy belső buildben; a nyilvános kiadásban nincs |
 
-Mellette készült:
+### Az eladási landing (`/elado-hotel`) szekciói
 
-- design tokenek (`src/app/globals.css`);
-- ideiglenes SVG wordmark és favicon (`public/brand/`, `src/app/icon.svg`);
-- központi tartalommodell (`src/content/`);
-- asset-manifest (`src/content/media.ts`);
-- brand board (`docs/brand/HVH_BRAND_BOARD.png`, döntések: `docs/HVH_BRAND.md`);
-- tárgyalási screenshotok (`docs/screenshots/`).
+| | Szekció | Tartalom |
+|---|---|---|
+| A | Összefoglaló | valódi kép, fő CTA: „Részletes bemutatót és egyeztetést kérek”; a CTA a tartalom utáni ajánlatkérőre visz |
+| B | Ingatlanadatok | minden adat állapotcímkével (Megerősített / Korábbi nyilvános közlés / Tulajdonosi közlés / Egyeztetés tárgya), jelmagyarázattal; méret, építési év, műszaki állapot és engedélyek egyeztetési témaként |
+| C | A ház és terei | |
+| D | Környék | |
+| E | Működés | tulajdonosi közlés a 2026-os nyárról; tisztázandó elemek; a retreat lehetséges irányként, nem ígéretként |
+| F | Kinek lehet érdekes? | a négy célcsoport |
+| G | Két vásárlási út | |
+| H | Feltételek | „Irányár és értékesítési feltételek egyeztetés alapján.” |
+| I | Dokumentumok és megtekintés | nincs letöltés, nincs adatszoba-állítás |
+| J | GYIK | |
+| K | Folyamat | |
+| L | Ajánlatkérő | |
 
-## Indítás
+Mobilon egy diszkrét, ragadós CTA-sáv is megjelenik.
+
+### A foglalási demó bemutatási menete (kb. 2 perc)
+
+1. **Indítás.** A főoldalon a „Foglalási lehetőségek” gombbal a foglalási blokkhoz jut. Látható a jelölés: „Bemutató foglalási folyamat — valódi foglalás nem történik.”
+2. **Keresés.** Válasszon dátumot és vendégszámot, majd nyomja meg az „Elérhetőség megtekintése” gombot. Ez átvisz a `/foglalas` oldalra, előtöltött adatokkal.
+3. **Elhelyezés.** A mintaadatos elhelyezések valódi hotelképekkel jelennek meg, „Mintaadat” jelöléssel és ár nélkül. Válasszon egyet.
+4. **Vendégadatok.** Töltse ki az űrlapot. A validáció mezőszinten jelez; a lépésjelzővel visszalépve minden adat megmarad.
+5. **Lezárás.** Az összesítő után nyomja meg a „Demó befejezése” gombot. Ez nem foglal, nem küld és nem igazol vissza; az adatok a lap bezárásával elvesznek.
+
+Felépítés (`src/features/booking/`):
+
+- `model.ts`: típusok és validáció;
+- `provider.ts`: `BookingProvider` interfész;
+- `demo-data.ts` és `demo-provider.ts`: a demó mintaadat-forrása;
+- `provider-registry.ts`: ezen keresztül köthető be később valódi foglalómotor, a felület újraépítése nélkül;
+- UI-komponensek.
+
+### Ajánlatkérő — tényleges működési státusz
+
+- **Mezők:** név, email, telefon (opcionális), cég (opcionális), érdeklődési irány, kérés, üzenet. Teljes validáció kliensen és szerveren ugyanazzal a kóddal (`src/features/inquiry/schema.ts`).
+- **Jelenlegi mód: mailto.** Nincs konfigurált küldő backend. A gomb felirata „Email előkészítése”: megnyitja a látogató levelezőjét a `sale@hotelvillahuber.com` címre előkészített levéllel. Mellette másolási alternatíva és újranyitó link van. „Elküldve” állapot nem jelenik meg.
+- **Szerveres mód (kész, kikapcsolva):** `POST /api/ajanlatkeres`. Tartalmaz:
+  - 16 KB-os méretkorlátot és JSON-ellenőrzést;
+  - honeypot mezőt és minimális kitöltési időt;
+  - IP-alapú korlátot (best-effort);
+  - szerveroldali validációt;
+  - a személyes adatok naplózásának tilalmát.
+  
+  Sikert csak a provider 2xx válasza után jelez („továbbítottuk”), ami nem igazolt postafiók-kézbesítés. Hibánál hibaüzenet és mailto-alternatíva jelenik meg. Kipróbálva mockolt elfogadás és hiba esetén, valamint valódi, elérhetetlen webhookkal.
+- **A szerveres küldés bekapcsolásához szükséges:**
+  1. **Node-futtatókörnyezet.** A GitHub Pages statikus, ott API nem fut. Ehhez Vercel-projekt kell (a gyökérkönyvtár `hotel-villa-huber-demo`), vagy más Node-hoszt.
+  2. **Provider-beállítás** szerveroldali környezeti változókban (nem `NEXT_PUBLIC_`):
+     - **Resend:** `INQUIRY_PROVIDER=resend`, `RESEND_API_KEY`, `INQUIRY_FROM_EMAIL`. A feladó domainje legyen hitelesítve a Resendben (például `hotelvillahuber.com` DNS-rekordokkal; ezt a tulajdonosnak kell jóváhagynia).
+     - **Webhook:** `INQUIRY_PROVIDER=webhook`, `INQUIRY_WEBHOOK_URL` (HTTPS), opcionálisan `INQUIRY_WEBHOOK_SECRET`.
+  3. **Új build.** A mód buildkor dől el az `/elado-hotel` oldalon.
+  4. **Postafiók-ellenőrzés.** Meg kell erősíteni, hogy a `sale@hotelvillahuber.com` postafiók létezik és fogad levelet.
+
+## Production-kiadás
+
+**Választott hoszting: GitHub Pages.** A repó nyilvános, a Pages ingyenes, és a meglévő jogosultságokkal elérhető. URL a bekapcsolás után: **https://benedekalex97-lgtm.github.io/Hotel-Villa-Huber/**
+
+- **Workflow:** `.github/workflows/pages.yml`. Pushra fut a munkaágon, vagy kézzel indítható. Lépései:
+  1. typecheck, lint és egységtesztek;
+  2. statikus build (`HVH_STATIC_EXPORT=1`, basePath `/Hotel-Villa-Huber`);
+  3. szivárgásellenőrzés;
+  4. e2e a statikus csomagon, Pages-szerű kiszolgálóval;
+  5. feltöltés és deploy.
+- **A kiadásba nem kerül be:** `/munka/*`, az API, a proxy, a belső díjak, az árak és a közvetítői adatok. Ezt a build szintje és a `verify:pages` ellenőrzés is garantálja.
+
+**Blokkoló, ami a production URL-t még megakadályozza:**
+
+- **GitHub Pages nincs bekapcsolva a repóban.** A workflow `GITHUB_TOKEN`-je nem hozhatja létre a Pages-oldalt („Create Pages site failed — Resource not accessible by integration”, run #1, 2026-10-01 05:22 UTC). A munkakörnyezet proxyja a Pages API-t tiltja.
+- **Teendő (egyszeri, kb. 1 perc):**
+  1. GitHub → Hotel-Villa-Huber → Settings → Pages → Build and deployment → Source: **GitHub Actions**.
+  2. Actions → „Production — GitHub Pages” → Run workflow (ág: `claude/hotel-villa-huber-demo-qqrcvp`), vagy a legutóbbi futás újraindítása.
+  3. Ha a Settings → Environments → `github-pages` környezet ágkorlátozást kér, engedélyezni kell rajta a `claude/hotel-villa-huber-demo-qqrcvp` ágat.
+
+**Vercel (nem sikerült):**
+
+- A Vercel-connector a csapatban nem hozhat létre projektet („You don't have permission to create the project”, 403). Git-alapú deploymenttel sem: „You don't have permission to create a project”.
+- A Vercel API a munkakörnyezetből hálózatilag nem érhető el.
+- Meglévő, más ügyfélhez tartozó Vercel-projektet szándékosan nem használtunk.
+
+**Pull request és merge:**
+
+- A repóban csak a munkaág létezik (ez az alapértelmezett ág); `main` vagy más alapág nincs, ezért PR nem nyitható.
+- A `main` ág létrehozását (orphan commitból, illetve az első commitra mutató push-sal) a munkakörnyezet biztonsági szabálya romboló git-műveletként letiltotta.
+- Megoldás: a felhasználó létrehoz egy alapágat (pl. `main` a c528551 commitból), ezután a PR megnyitható. A Pages-kiadáshoz merge nem szükséges, mert a workflow a tesztelt munkaágból dolgozik.
+
+## Indítás helyben
 
 ```bash
 cd hotel-villa-huber-demo
 npm install
-
-# Fejlesztői előnézet (minden útvonal, a belsők is): http://localhost:3000
-npm run dev
-
-# Publikus kiadási build: /munka/* nincs benne
-npm run build:public && npm run start:public      # http://localhost:3100
-
-# Belső build a sablonszerkesztővel
-npm run build:internal && npm run start:internal  # http://localhost:3101/munka/email
+npm run dev                                       # http://localhost:3000 — minden útvonal, a belsők is
+npm run build:public && npm run start:public      # Node-kiadás API-val: http://localhost:3100
+npm run build:internal && npm run start:internal  # belső: http://localhost:3101/munka/email
+npm run build:pages && node scripts/serve-static.mjs 3200   # Pages-kiadás: http://localhost:3200/Hotel-Villa-Huber/
 ```
 
-Teljes ellenőrzés egy paranccsal: `npm run check`. Sorrendben: typecheck, lint, egységtesztek, publikus build, szivárgásellenőrzés, belső build, e2e.
-
-## Belső route-gate
-
-A `/munka/*` útvonalakat három réteg védi:
-
-1. **Build.** A belső oldalak `*.internal.tsx` fájlok. A `next.config.ts` csak `next dev` alatt vagy `HVH_INTERNAL_TOOLS=1` esetén ismeri fel őket oldalként. A publikus buildben se a route, se a kódja nem épül be. Ezt a `npm run verify:public` ellenőrzi: route-manifest, valamint a szerver- és kliens-chunkok tiltott szövegekre (sablonszöveg, belső útvonal, díjak, ár, kapacitás).
-2. **Proxy.** A `src/proxy.ts` a `/munka/*` kérésekre 404-et ad, ha a gate zárva.
-3. **Oldal.** A belső layout és oldal szerveroldalon `notFound()`-ot hív, ha a gate zárva.
-
-Teljes auth-rendszer nem készült, ez megfelel a briefnek. A belső build hálózatra kitéve nem védett, ezért csak helyben fusson.
-
-## Ellenőrzések
-
-### Lefuttatva (2026-10-01)
+## Ellenőrzések (2026-10-01)
 
 | Ellenőrzés | Eredmény |
 |---|---|
-| `npm run typecheck` (tsc) | hibátlan |
-| `npm run lint` (eslint, next core-web-vitals + typescript) | hibátlan |
-| `npm test` (vitest) | 5 fájl, 31 teszt, mind sikeres |
-| `npm run build:public` | sikeres; útvonalak: `/`, `/elado-hotel` (statikus) |
-| `npm run verify:public` | OK, 135 fájl, belső tartalom nélkül |
-| `npm run build:internal` | sikeres; `/munka/email` és `/munka/brand` dinamikus |
-| `npx playwright test` (Chromium, két szerver) | 13/13 sikeres |
-| Vízszintes túlcsordulás (`/`, `/elado-hotel`, `/munka/email` × 390, 768, 1440 px) | 0 px mindenhol |
-| HTTP: publikus szerveren `/munka/email` | 404 |
-| HTTP: belső szerveren `/munka/email` | 200 |
+| `npm run typecheck`, `npm run lint` | hibátlan (helyben és CI-ban) |
+| `npm test` (vitest) | 7 fájl, 51 teszt — sikeres (helyben és CI-ban) |
+| `npm run build:public` + `verify:public` | sikeres; Node-kiadás: `/`, `/foglalas`, `/elado-hotel`, `/api/ajanlatkeres`, proxy |
+| `npm run build:internal` | sikeres; `/munka/email`, `/munka/brand` |
+| `npm run build:pages` + `verify:pages` | sikeres; statikus oldalak: `/`, `/foglalas/`, `/elado-hotel/`, 404; `/munka` és API nincs |
+| Playwright, Node-kiadások (publikus + belső) | 26/26 sikeres |
+| Playwright, statikus Pages-kiadás basePath alatt (helyben és CI-ban) | 23/23 sikeres |
+| Ajánlatkérő szerveres mód (mock elfogadás, mock hiba, valódi elérhetetlen webhook) | elfogadásnál siker, hibánál hibaüzenet és mailto-alternatíva |
+| Vízszintes túlcsordulás: `/`, `/foglalas`, `/elado-hotel`, `/munka/email` × 390 és 1440 px | 0 px |
+| Production URL ellenőrzése | **nem futott** — a Pages még nincs bekapcsolva (lásd a blokkolót) |
 
 Mit fednek le a tesztek:
 
-- **Egységtesztek**
-  - Emailsablon-renderelés: betű szerinti szövegmegőrzés; külön `recipientName` és `senderName`; literális, biztonságos behelyettesítés (`$&`, `[Név]`, HTML); A/Az névelő; helyőrző-felismerés; kézi szerkesztés védelme.
-  - Mailto-kódolás: `encodeURIComponent`, `&`, `#`, `+`, `%`, ékezetek, CRLF, header-injekció.
-  - Route-gate: env-logika, `pageExtensions` buildfázisonként, `/munka` fájlnevek, tiltott importok.
-  - Tartalommodell: nincs publikus kapacitás- vagy áradat, kizárt képek, létező képfájlok.
-- **E2E**
-  - CTA a `/`-ról az `/elado-hotel`-re.
-  - Lightbox: Escape, nyilak, fókusz visszaadása.
-  - `sale@` link a főoldalon.
-  - Űrlap: validáció, előkészített levél, címzett a vágólapon, nincs „elküldve” állapot.
-  - Mobil menü és túlcsordulás.
-  - Belső felület a publikus módban 404, `noindex` és nincs canonical.
-  - Három sablon, kézi szerkesztés megtartása sablonváltáskor és mezőváltáskor, visszaállítás megerősítéssel, vágólap pontos tartalma, helyőrző-őr.
+- **Foglalás:** minden lépés; dátum- és létszámvalidáció; visszalépés adatmegőrzéssel; nincs `/api` kérés; nincs „sikeres foglalás”; demó-jelölés a widgetnél és a lezárásnál.
+- **Eladási landing:** A–L sorrend; a CTA az ajánlatkérőre visz; pontos ársor, árszám és euró nélkül; minden adat állapotcímkével; GYIK billentyűzettel; ajánlatkérő-validáció és mailto mód.
+- **Belső felület:** a `/munka/*` 404 a publikus kiadásokban.
+- **Emailszerkesztő:** külön címzett és aláíró, kézi szerkesztés megőrzése, visszaállítás, vágólap.
 
-### Nem futtatva, vagy nem elérhető
+Nem futott:
 
-- A tényleges `mailto:` megnyitást böngészőben nem automatizáltuk: headless Chromiumban nincs levelezőkliens. A link összeállítását egységteszt fedi.
-- A sikertelen vágólap-másolás hibaágát böngészőben nem kényszerítettük ki (a kód kezeli: kijelölés + kézi másolási útmutatás).
-- Firefoxban és Safariban nem teszteltünk; csak Chromiumban.
-- Automatizált akadálymentességi audit (axe) nem futott. Billentyűzetes működés, fókusz, label, kontraszt (számolt WCAG-arányok: `docs/HVH_BRAND.md`) ellenőrizve.
-- Lighthouse vagy teljesítménymérés nem futott.
+- Firefox és Safari;
+- automatizált akadálymentességi audit (axe) és Lighthouse;
+- valódi levelezőkliens megnyitása;
+- valódi email-provider (nincs konfigurálva).
 
 ## Munkamód és modellek
 
-- Fő agent: `claude-opus-5-5`, high effort (session-beállítás, ellenőrizve). Ő végezte az arculatot, az adatmodellt, az útvonalakat, a közös komponenseket, a konfigurációt, az integrációt és a végső ellenőrzést.
-- Két fejlesztő subagent párhuzamosan, szigorú fájltulajdonlással:
-  - **A:** `src/features/home`, `src/features/sale`, mailto-teszt.
-  - **B:** `src/features/email`, renderelési tesztek.
-  - Mindkettő `claude-sonnet-5-5` modellen futott (saját jelentésük szerint).
-- **Eltérés a brieftől:** a delegáló eszköz csak modellaliast enged (`sonnet`), effort-paramétert nem. A subagentek saját kontextusuk szerint **low** effort beállítással futottak, nem high-dal. Kitalált modellazonosítót vagy frontmatter-mezőt nem használtunk. A subagentek munkáját a fő agent átnézte, javította (pl. sablonfüggő mintaadat) és teljes tesztkörrel ellenőrizte.
-
-## Integráció közben talált és javított hibák
-
-- A belső útvonalnevek a közös `site.ts`-en keresztül a publikus kliens-bundle-be kerültek. Áthelyezve: `src/content/internal/routes.ts`.
-- A nem publikus adatok (kapacitás, a korábbi ár megjegyzése) a publikus szerver-bundle-be kerültek. Szétválasztva: publikus rész `property.ts`, belső nyilvántartás `src/content/internal/fact-register.ts`.
-- Kontraszt: a fókuszgyűrű, az input keret és a segédszöveg tokenje sötétebb lett. Sötét felületre külön fókuszszín került.
-- A Next.js nem generál 1024 px-nél nagyobb képváltozatot, mivel a forrásképek 1024 px-esek.
-- A demó kitöltés „személyes kapcsolódás” értéke a sablon mondattani helyéhez igazodik (mondatkezdő vagy mondatközi).
+- **Fő agent:** `claude-opus-5-5`, high effort (session-beállítás). Ő végezte az adatmodellt és a tartalmat, a navigációt, az ajánlatkérő-backendet, a kiadási módokat, a workflow-t, az integrációt és az ellenőrzést.
+- **Két subagent** (`claude-sonnet-5-5`, saját jelentésük szerint) dolgozott párhuzamosan, külön fájltulajdonlással:
+  - **A:** vendégoldal és foglalási demó;
+  - **B:** eladási landing és ajánlatkérő-frontend.
+- **Effort:** a delegáló eszköz nem állít be effortot. A B agent kontextusa „low”-t jelzett, az A agenté nem jelzett szintet. Ezért nem állítjuk, hogy high volt. A munkájukat a fő agent átnézte, javította és teljes tesztkörrel ellenőrizte.
 
 ## Valódi hiányok
 
-- **Új média:** a pendrive-os fotók és videó nincsenek feldolgozva (átvétel a tárgyaláson). Csere lépései: `docs/HVH_MEDIA_REPLACEMENT.md`.
-- **Képminőség:** a jelenlegi képek 1024 px-es Booking-képek. A hero ezért osztott elrendezésű, nem teljes képernyős. A Booking-képek felhasználási joga tulajdonosi megerősítést igényel.
-- **Adatok:** irányár, kapacitás, működési, műszaki és jogi háttér nincs megerősítve, ezért nem jelenik meg. Adatbekérési lista: `docs/HVH_CONTENT_SOURCES.md`.
-- **Logó:** eredeti logó nem állt rendelkezésre; a wordmark ideiglenes.
-- **Részletes tájékoztató:** memorandum, adatszoba vagy letölthető anyag nincs. Az oldal ilyet nem is ígér.
-- **Domain:** nincs domain, ezért nincs canonical URL. Az oldal `noindex` (meta, `X-Robots-Tag`, `robots.txt`).
-- **Kapcsolati cím:** a `sale@hotelvillahuber.com` működése (postafiók, továbbítás) nincs ellenőrizve. A demó nem küld levelet.
-- **Hosting:** nincs. A futó előnézet a felhős munkakörnyezetben fut, kívülről nem érhető el. Helyi indítás: lásd fent.
-- **Verziókezelés:** a brief szerint commit és push nem része ennek a körnek. A felhős munkakörnyezet viszont ideiglenes, és a munkamenet a kijelölt `claude/hotel-villa-huber-demo-qqrcvp` ágra mentést írja elő. Ezért a forráskód erre az ágra került. Pull request, merge és deploy nem történt.
+- **Production:** a GitHub Pages bekapcsolása (felhasználói beállítás, lásd fent).
+- **PR:** alapág hiányzik (lásd fent).
+- **Ajánlatkérő:** szerveres küldéshez Node-hoszt, provider-kulcs és hitelesített feladó kell; a `sale@` postafiók működése nincs ellenőrizve.
+- **Vendégkapcsolat:** nincs megerősített vendégkapcsolati email vagy telefonszám. A `NEXT_PUBLIC_GUEST_EMAIL` és `NEXT_PUBLIC_GUEST_PHONE` változóval adható meg; addig az oldal ezt semlegesen jelzi.
+- **Adatok:** minden kapacitás- és szolgáltatásadat korábbi nyilvános közlés, tulajdonosi megerősítés nélkül. Ár, méret, építési év, műszaki és jogi háttér egyeztetés tárgya (lásd `HVH_CONTENT_SOURCES.md`).
+- **Média:** a pendrive-os média nincs feldolgozva; a képek 1024 px-esek (`HVH_MEDIA_REPLACEMENT.md`).
+- **Statikus hosztolás:** nincs `X-Robots-Tag` fejléc. A `noindex` meta és a `robots.txt` megmarad; mivel a `robots.txt` basePath alatt van, a domain gyökerében nem hat.

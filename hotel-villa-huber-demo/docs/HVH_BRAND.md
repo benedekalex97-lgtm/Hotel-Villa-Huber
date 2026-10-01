@@ -61,7 +61,7 @@ Kontraszt a törtfehér alapon (WCAG): tinta 14,3:1 · halvány tinta 7,4:1 · s
 
 ## Mobil és mozgás
 
-- Töréspontok: 390 px mobil, 768 px tablet, 960 px (fejléc-navigáció), 1440 px desktop. Nincs vízszintes túlcsordulás.
+- Töréspontok: 390 px mobil, 768 px tablet, 1240 px (teljes fejléc-navigáció, 8 menüpont), 1440 px desktop. Nincs vízszintes túlcsordulás.
 - Mobilon a navigáció lenyíló panel (Escape zárja, a fókusz visszatér a gombra). Érintési cél legalább 44 px.
 - Mozgás: csak rövid színátmenet. `prefers-reduced-motion` esetén minden átmenet kikapcsol. Nincs automatikus hang, scroll hijack vagy dekoratív 3D.
 

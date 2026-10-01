@@ -5,14 +5,15 @@ A demó jelenleg a Booking-exportból származó, legfeljebb 1024 px-es képekre
 Minden kép egyetlen helyen van nyilvántartva: `src/content/media.ts`.
 
 - `MEDIA`: a kép-nyilvántartás (src, alt, caption, sourceFile, forrás, generáció, méret, fókuszpont, belső megjegyzés).
-- `MEDIA_SLOTS`: melyik oldalhelyen melyik kép jelenik meg (`home.hero`, `home.villa`, `home.location`, `home.saleTeaser`, `sale.hero`, `sale.property`).
-- `GALLERY`: a galéria sorrendje (6–8 kép).
+- `MEDIA_SLOTS`: melyik oldalhelyen melyik kép jelenik meg (`home.hero`, `home.villa`, `home.location`, `home.saleTeaser`, `booking.hero`, `sale.hero`, `sale.property`).
+- `GALLERY`: a galéria sorrendje (jelenleg 12 kép).
+- A szobák és szolgáltatások képeit a `src/content/guest.ts` (`ACCOMMODATION`, `GUEST_SERVICES`) a `MEDIA` azonosítóival hivatkozza; cserénél ott is az azonosítót kell átírni.
 
 Az oldalak a képeket kizárólag ezeken keresztül érik el, ezért **a cseréhez kódot nem kell módosítani**.
 
 ## Lépések
 
-1. **Másolás.** Az eredeti fájlok a Drive-ra kerülnek, változatlanul (javasolt hely: `01_SOURCE_MATERIALS/06_ORIGINAL_IMAGES/PENDRIVE_2026-10/`). Webes példány: `public/media/pendrive-2026-10/`. Az eredeti fájlnevet tartsd meg, vagy rögzítsd a `sourceFile` mezőben.
+1. **Másolás.** Az eredeti fájlok a Drive-ra kerülnek, változatlanul (javasolt hely: `01_SOURCE_MATERIALS/06_ORIGINAL_IMAGES/PENDRIVE_2026-10/`). Webes példány: `public/media/pendrive-2026-10/`. A GitHub Pages-kiadásban nincs szerveres képoptimalizálás (a fájlok változatlanul mennek ki), ezért a webes példányt előre méretezd és tömörítsd. Az eredeti fájlnevet tartsd meg, vagy rögzítsd a `sourceFile` mezőben.
 2. **Előkészítés.** Fekvő képeknél a hosszabbik oldal 2400–3000 px, JPEG minőség ~85, sRGB, EXIF/GPS törölve. Például: `convert be.jpg -resize 3000x3000\> -strip -quality 85 ki.jpg`. A Next.js ebből generál reszponzív WebP/AVIF változatokat. Vágás és tömörítés megengedett. A látható állapotot (tárgyak, felújítás, ég, évszak) megváltoztatni tilos. Generatív kitöltés sem megengedett.
 3. **Nyilvántartás.** Új elem a `MEDIA` objektumban:
    ```ts
@@ -44,20 +45,30 @@ A videó beépítése ebben a körben nincs megvalósítva. Javaslat: saját hos
 - Nem készítünk generált „felújított” szobát, kitalált medencét, drón- vagy panorámaképet.
 - A pendrive-os anyag felhasználási jogát (fotós szerződés, licenc) rögzítsd a `sources.ts`-ben.
 
-## Jelenleg felhasznált képek
+## Jelenleg felhasznált képek (18 db, mind a Booking-exportból)
 
-| Manifest-azonosító | Fájl | Méret | Hol |
+| Manifest-azonosító | Fájl | Méret | Fő felhasználás |
 |---|---|---|---|
-| facade-summer | 19333297.jpg | 1024×659 | `/` hero, `/elado-hotel` ingatlanbemutató |
-| facade-valley | 19333057.jpg | 1024×660 | `/` A villa, galéria, `/elado-hotel` hero |
-| terrace | 19332795.jpg | 1024×703 | galéria |
+| facade-summer | 19333297.jpg | 1024×659 | főoldal hero, eladási ingatlanbemutató |
+| facade-valley | 19333057.jpg | 1024×660 | „A hotel”, eladási hero, galéria |
+| terrace | 19332795.jpg | 1024×703 | szolgáltatások, foglalás oldal, galéria |
+| terrace-loungers | 87276588.jpg | 1024×683 | galéria |
 | corridor | 87275722.jpg | 1024×683 | galéria |
 | staircase | 34324379.jpg | 1024×768 | galéria |
-| salon | 38856066.jpg | 1024×691 | galéria |
-| room | 125610505.jpg | 1024×683 | galéria |
-| sauna | 87275544.jpg | 1024×683 | galéria |
-| facade-winter-dusk | 38856055.jpg | 1024×642 | galéria, `/` értékesítési átvezetés |
-| afritz-sign | 79475626.jpg | 960×720 | `/` elhelyezkedés (nem a hotelt ábrázolja) |
+| salon | 38856066.jpg | 1024×691 | szolgáltatások, galéria |
+| room | 125610505.jpg | 1024×683 | szobák, galéria |
+| room-double | 87275827.jpg | 1024×683 | szobák |
+| room-family | 34324370.jpg | 1024×768 | szobák, galéria |
+| room-living | 34324368.jpg | 1024×768 | szobák |
+| bathroom | 125610447.jpg | 1024×683 | szobák, galéria |
+| restaurant | 38851398.jpg | 515×768 | szolgáltatások (álló, csak kis méretben) |
+| bar | 34324381.jpg | 1024×768 | szolgáltatások, galéria |
+| sauna | 87275544.jpg | 1024×683 | szolgáltatások, galéria |
+| sauna-bench | 34324380.jpg | 1024×768 | tartalék |
+| facade-winter-dusk | 38856055.jpg | 1024×642 | galéria, eladási átvezetés |
+| afritz-sign | 79475626.jpg | 960×720 | környék (nem a hotelt ábrázolja) |
+
+Megjegyzés: a képinventár a `34324375.jpg`-t „összenyitható szobák”-ként írja le, de a fájl ténylegesen csillárt ábrázol — ezért nincs felhasználva; az inventárt javítani kell.
 
 ## Hiányzó képek, amelyeket a pendrive-tól várunk
 

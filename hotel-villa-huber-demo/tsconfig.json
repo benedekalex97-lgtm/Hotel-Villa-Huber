@@ -34,17 +34,13 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    ".next/dev/types/**/*.ts",
-    ".next-public/types/**/*.ts",
-    ".next-public/dev/types/**/*.ts",
-    ".next-internal/types/**/*.ts",
-    ".next-internal/dev/types/**/*.ts"
+    ".next/dev/types/**/*.ts"
   ],
   "exclude": [
     "node_modules",
     ".next",
-    ".next-public",
-    ".next-internal",
+    ".next-*",
+    "out",
     "test-results",
     "playwright-report"
   ]

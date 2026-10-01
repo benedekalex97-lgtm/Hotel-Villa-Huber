@@ -25,6 +25,54 @@ Mindegyiket a hitelesített Google Drive-connectoron keresztül olvastuk, 2026-1
 
 A Drive-hivatkozások belső jegyzetek, nem kép-URL-ek. A képek helyi másolatként szerepelnek a `public/media/` alatt.
 
+## 2026-10-01 — v2.1 scope frissítés
+
+Új források:
+
+| Azonosító | Forrás | Mire használtuk |
+|---|---|---|
+| SRC-BRIEF-V2.1 | [Build brief v2.1](https://drive.google.com/file/d/1CaJlyO23hqIDn89Dd7m1gslGrJ7s2VKQ/view) | vendégoldal, foglalási demó, A–L eladási landing, ajánlatkérő, production |
+| SRC-FACT-REGISTER | [02_FACT_REGISTER.md v1.1](https://drive.google.com/file/d/1ZB0abQboYe3ZokSTAL6dO-Tge6Ywet0x/view) | kapacitás, terek, wellness, parkoló, cím, régió (F-azonosítók) |
+| SRC-OWNER-DOCS | [05_OWNER_DOCUMENT_REQUEST.md](https://drive.google.com/file/d/12Bhid62lrWpNk3YNaN6RAwNpDo8zlIUv/view) | a „Dokumentumok és megtekintés” és a „Tisztázandó” témák |
+| SRC-HVH-WEB / SRC-OTA / SRC-BROKER / SRC-OFFICIAL-REGION | a tényregiszter SRC-01…SRC-19 forráscsoportjai | lásd `src/content/sources.ts` |
+
+A hotelvillahuber.com és a visitvillach.at a munkakörnyezetből nem volt elérhető (hálózati tiltás), ezért az ezekből származó adatokat a tényregiszter dátumozott rögzítése alapján vettük át, és mindegyik „Korábbi nyilvános közlés — tulajdonosi megerősítésre vár” címkével jelenik meg.
+
+### Mi jelenik meg most nyilvánosan, és milyen címkével
+
+| Adat | Megjelenített érték | Címke | Forrás (F-azonosító) |
+|---|---|---|---|
+| Név, helyszín, ingatlantípus | Hotel Villa Huber; Afritz am See, Karintia; villa-hotel étteremmel | Megerősített | brief |
+| Cím | Millstätter Straße 101, 9542 Afritz am See | Korábbi nyilvános közlés | F-002 |
+| Szobák | 14 szoba és lakosztály, köztük családi lakosztályok | Korábbi nyilvános közlés | F-020 (3 forrás egyezik) |
+| Férőhely | legfeljebb 45 vendég | Korábbi nyilvános közlés | F-022 |
+| Étterem | kb. 50 fős étterem, kávézó-bár, terasz | Korábbi nyilvános közlés | F-023, F-024 |
+| Wellness | finn szauna, jakuzzi, kültéri fadézsa | Korábbi nyilvános közlés | F-026, F-027 |
+| Parkolás | kb. 35 személyautó és egy busz | Korábbi nyilvános közlés | F-028 |
+| Szobafelszereltség | műholdas TV, wifi, masszázszuhany-kabin, erkély | Korábbi nyilvános közlés | F-029 |
+| Borpince, besorolás (3*), 2010-es felújítás | szöveges, szám nélkül | Korábbi nyilvános közlés | F-025, F-006, F-014 |
+| Afritzi-tó | kb. 700 méterre (korábbi hotelleírás szerint); nem tóparti | Korábbi nyilvános közlés | F-005 |
+| Működés | a tulajdonos szerint 2026 nyarán működött | Tulajdonosi közlés | brief (szept. 30.) |
+| Vendégértékelés | Tripadvisor 4,3/5, 58 értékelés (2026. 09. 21.) | Korábbi nyilvános közlés | F-033 |
+| Üzemeltető | leszerződött üzemeltető nincs | Megerősített | stratégia |
+| Irányár | „Irányár és értékesítési feltételek egyeztetés alapján.” | Egyeztetés tárgya | brief |
+| Környék | Gegendtal, Afritzi-tó és Brennsee, Slow Trail 4,6 km, Villach-régió, Gerlitzen Alpe és Bad Kleinkirchheim mint téli központok (távolság nélkül) | hivatalos települési/turisztikai forrás | F-052…F-057 |
+
+### Szándékosan nem jelenik meg
+
+- Ár bármilyen formában (1,2 M EUR korábbi adat; közvetítői 1,25 M és 990 000 EUR — F-040…F-044, nem publikálható).
+- Épület- és telekméret (2 000 m², 5 000 m² — egyetlen közvetítői hirdetés, F-015, F-016): egyeztetési témaként szerepel.
+- Építési év (ellentmondó: 1830 / 1900 / 1911, F-010…F-012): egyeztetési témaként.
+- Távolságok és menetidők (forrásonként eltérnek, C-02).
+- Közvetítő neve, üzemeltető jogi neve, állapotminősítés („excellent condition” — F-046 nem vehető át).
+- Saját díjaink (indulási, havi, sikerdíj).
+
+### Ütközések, amelyeket a tulajdonossal kell tisztázni
+
+- **Működés:** a tényregiszter (09-25, F-035) szerint a hotel szünetelt; a szept. 30-i tulajdonosi közlés szerint 2026 nyarán működött. A frissebbet használjuk, tulajdonosi közlésként.
+- **Képinventár:** a `34324375.jpg` az inventárban „összenyitható szobák”, valójában csillárt ábrázol.
+- **Szauna:** tisztázandó, hogy a `34324380.jpg` és a `87275544.jpg` ugyanaz a szauna-e.
+
 ## Adatállapotok
 
 `jóváhagyott` · `nyilvános közlés, megerősítendő` · `tulajdonosi közlés` · `ismeretlen`. A jóváhagyást nem következtetjük ki pusztán abból, hogy egy fájl létezik.

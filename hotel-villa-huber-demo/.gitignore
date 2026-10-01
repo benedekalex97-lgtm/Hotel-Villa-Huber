@@ -1,5 +1,6 @@
 *.tsbuildinfo
 .env*.local
+.next-*/
 .next-internal/
 .next-pages/
 .next-public/
