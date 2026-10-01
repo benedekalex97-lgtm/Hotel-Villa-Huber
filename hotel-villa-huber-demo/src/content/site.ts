@@ -4,8 +4,6 @@ import { PROPERTY } from "./property";
 export const ROUTES = {
   home: "/",
   sale: "/elado-hotel",
-  internalEmail: "/munka/email",
-  internalBrand: "/munka/brand",
 } as const;
 
 export const HOME_SECTIONS = {

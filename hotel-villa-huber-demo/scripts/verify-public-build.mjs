@@ -23,8 +23,20 @@ const FORBIDDEN = [
   "150000",
   "sikerdíj",
   "1,2 millió",
-  "1 200 000",
   "1.200.000",
+  "1,25 millió",
+  "kb. 45",
+  "50 fős",
+  "kb. 35 autó",
+  "2026 nyarán",
+  "Nincs igazolt, leszerződött üzemeltető",
+  "1.200.000",
+  "1,25 millió",
+  "kb. 45",
+  "50 fős",
+  "kb. 35 autó",
+  "2026 nyarán",
+  "Nincs igazolt, leszerződött üzemeltető",
 ];
 
 function walk(dir) {

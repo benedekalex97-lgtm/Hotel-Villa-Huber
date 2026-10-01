@@ -1,7 +1,7 @@
 import { renderTemplate } from "./render";
 import {
   DEFAULT_TEMPLATE_ID,
-  DEMO_VALUES,
+  demoValuesFor,
   EMPTY_VALUES,
   TEMPLATES,
   getTemplate,
@@ -107,8 +107,10 @@ export function draftReducer(state: DraftState, action: DraftAction): DraftState
       return { ...state, values, drafts: applyValues(state, values), demo: false };
     }
 
-    case "fillDemo":
-      return { ...state, values: DEMO_VALUES, drafts: applyValues(state, DEMO_VALUES), demo: true };
+    case "fillDemo": {
+      const values = demoValuesFor(state.active);
+      return { ...state, values, drafts: applyValues(state, values), demo: true };
+    }
 
     case "clearValues":
       return { ...state, values: EMPTY_VALUES, drafts: applyValues(state, EMPTY_VALUES), demo: false };

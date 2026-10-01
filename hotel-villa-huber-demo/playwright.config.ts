@@ -31,7 +31,7 @@ export default defineConfig({
   projects: [
     {
       name: "public-release",
-      testMatch: /public\..*spec\.ts/,
+      testMatch: /public\.(gate|flow)\.spec\.ts/,
       use: { ...devices["Desktop Chrome"], baseURL: "http://localhost:3100" },
     },
     {

@@ -1,11 +1,12 @@
 import type { Fact } from "./types";
 
 /**
- * Hotel Villa Huber — központi ingatlanadat-nyilvántartás.
+ * Hotel Villa Huber — központi ingatlanadat-nyilvántartás, publikus rész.
  *
- * Szabály: publikus oldal csak `visibility: "public"` adatot renderelhet,
- * a `publicFacts()` segédfüggvényen keresztül. A többi tétel az
- * adatbekérési listát és a belső dokumentációt táplálja.
+ * Itt csak `visibility: "public"` adat szerepelhet (teszt ellenőrzi).
+ * A belső és rejtett tételek (kapacitás, ár, tulajdonosi közlések, ismeretlen adatok)
+ * a `src/content/internal/fact-register.ts` fájlban vannak, hogy publikus
+ * bundle-be se kerülhessenek. A kettő együtt a teljes forrásnyilvántartás.
  */
 
 export const PROPERTY = {
@@ -21,7 +22,7 @@ export const PROPERTY = {
   contactEmail: "sale@hotelvillahuber.com",
 } as const;
 
-export const FACTS = [
+export const PUBLIC_FACTS = [
   // — Jóváhagyott, nyilvánosan megjeleníthető alapadatok —
   {
     id: "name",
@@ -75,144 +76,24 @@ export const FACTS = [
     note: "A második út lehetséges modell; nincs leszerződött üzemeltető.",
   },
 
-  // — Tulajdonosi közlés, nem megjelenített —
-  {
-    id: "operated-summer-2026",
-    label: "Működés 2026 nyarán",
-    value: "A tulajdonos közlése szerint a hotel 2026 nyarán működött.",
-    status: "tulajdonosi-kozles",
-    source: "SRC-OWNER-VERBAL",
-    visibility: "internal",
-    note: "Nem bizonyítja a jelenlegi nyitvatartást, foglalhatóságot vagy teljes éves működést.",
-  },
-  {
-    id: "operator",
-    label: "Üzemeltetői partner",
-    value: "Nincs igazolt, leszerződött üzemeltető.",
-    status: "jovahagyott",
-    source: "SRC-STRATEGIA-V1",
-    visibility: "internal",
-    note: "Meglévő megállapodást csak akkor mutatunk be, ha valóban létrejött.",
-  },
-
-  // — Régi nyilvános közlések, tulajdonosi megerősítés nélkül —
-  {
-    id: "rooms",
-    label: "Szobák száma",
-    value: "14",
-    status: "nyilvanos-megerositendo",
-    source: "SRC-PUBLIC-LEGACY",
-    visibility: "internal",
-  },
-  {
-    id: "beds",
-    label: "Férőhely",
-    value: "kb. 45",
-    status: "nyilvanos-megerositendo",
-    source: "SRC-PUBLIC-LEGACY",
-    visibility: "internal",
-  },
-  {
-    id: "restaurant",
-    label: "Étterem",
-    value: "50 fős",
-    status: "nyilvanos-megerositendo",
-    source: "SRC-PUBLIC-LEGACY",
-    visibility: "internal",
-  },
-  {
-    id: "wellness",
-    label: "Wellness",
-    value: "Wellness-rész (szauna a fotókon látható)",
-    status: "nyilvanos-megerositendo",
-    source: "SRC-PUBLIC-LEGACY",
-    visibility: "internal",
-  },
-  {
-    id: "parking",
-    label: "Parkoló",
-    value: "kb. 35 autó, buszparkolás",
-    status: "nyilvanos-megerositendo",
-    source: "SRC-PUBLIC-LEGACY",
-    visibility: "internal",
-  },
-
-  // — Ismeretlen / nem jóváhagyott, sehol nem jelenik meg —
-  {
-    id: "asking-price",
-    label: "Irányár",
-    value: null,
-    status: "ismeretlen",
-    source: "SRC-BRIEF-0930",
-    visibility: "hidden",
-    note: "A korábbi 1,2 millió EUR (és nyilvános hirdetésekben 1,25 millió EUR) nem jóváhagyott aktuális ár.",
-  },
-  {
-    id: "yield",
-    label: "Hozam, pénzügyi eredmény",
-    value: null,
-    status: "ismeretlen",
-    source: "SRC-BRIEF-0930",
-    visibility: "hidden",
-  },
-  {
-    id: "condition",
-    label: "Állapotminősítés",
-    value: null,
-    status: "ismeretlen",
-    source: "SRC-BRIEF-0930",
-    visibility: "hidden",
-  },
-  {
-    id: "renovation-cost",
-    label: "Felújítási költség",
-    value: null,
-    status: "ismeretlen",
-    source: "SRC-BRIEF-0930",
-    visibility: "hidden",
-  },
-  {
-    id: "permits",
-    label: "Magánhasználati vagy átalakítási engedély",
-    value: null,
-    status: "ismeretlen",
-    source: "SRC-BRIEF-0930",
-    visibility: "hidden",
-  },
-  {
-    id: "build-year",
-    label: "Építési év",
-    value: null,
-    status: "ismeretlen",
-    source: "SRC-BRIEF-0930",
-    visibility: "hidden",
-  },
-  {
-    id: "documents",
-    label: "Működési, műszaki és jogi dokumentáció",
-    value: "Hiányos",
-    status: "jovahagyott",
-    source: "SRC-BRIEF-0930",
-    visibility: "internal",
-  },
 ] as const satisfies readonly Fact[];
 
-export type FactId = (typeof FACTS)[number]["id"];
+export type PublicFactId = (typeof PUBLIC_FACTS)[number]["id"];
 
-export function getFact(id: FactId): Fact {
-  const fact = FACTS.find((f) => f.id === id);
+export function getPublicFact(id: PublicFactId): Fact {
+  const fact = PUBLIC_FACTS.find((f) => f.id === id);
   if (!fact) throw new Error(`Ismeretlen adat: ${id}`);
   return fact;
 }
 
 /** Csak publikusan megjeleníthető adatok. */
 export function publicFacts(): Fact[] {
-  return FACTS.filter((f) => f.visibility === "public");
+  return PUBLIC_FACTS.filter((f) => f.visibility === "public");
 }
 
 /** Csak publikus adat értékét adja vissza; minden más esetben hibát dob. */
-export function publicValue(id: FactId): string {
-  const fact = getFact(id);
+export function publicValue(id: PublicFactId): string {
+  const fact = getPublicFact(id);
   if (fact.visibility !== "public" || fact.value === null) {
     throw new Error(`A(z) "${id}" adat nem jeleníthető meg publikus oldalon.`);
   }

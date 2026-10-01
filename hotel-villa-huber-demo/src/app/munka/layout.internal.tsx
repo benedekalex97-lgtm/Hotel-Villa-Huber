@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { Wordmark } from "@/components/brand/Wordmark";
 import { internalToolsEnabled } from "@/lib/internal-gate";
 import { ROUTES } from "@/content/site";
+import { INTERNAL_ROUTES } from "@/content/internal/routes";
 import styles from "./internal.module.css";
 
 export const metadata: Metadata = {
@@ -24,8 +25,8 @@ export default function InternalLayout({ children }: { children: React.ReactNode
           </Link>
           <span className={styles.badge}>Belső · helyi használat</span>
           <nav aria-label="Belső navigáció" className={styles.nav}>
-            <Link href={ROUTES.internalEmail}>Emailsablonok</Link>
-            <Link href={ROUTES.internalBrand}>Brand board</Link>
+            <Link href={INTERNAL_ROUTES.email}>Emailsablonok</Link>
+            <Link href={INTERNAL_ROUTES.brand}>Brand board</Link>
           </nav>
         </div>
       </header>

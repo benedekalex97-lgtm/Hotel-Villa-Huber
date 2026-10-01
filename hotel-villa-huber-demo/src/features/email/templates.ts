@@ -72,10 +72,23 @@ export const EMPTY_VALUES: Values = {
 export const DEMO_VALUES: Values = {
   recipientName: "Minta Péter",
   companyName: "Minta Szálloda Kft.",
-  connection: "a múlt heti telefonbeszélgetésünk",
+  connection: "Minta Gábor ajánlása",
   senderName: "Kovács Anna",
   senderPhone: "+36 30 123 4567",
 };
+
+/**
+ * A kapcsolódás mondattani helye sablononként eltér (mondatkezdő a befektetőinél,
+ * mondatközi a szállodásnál), ezért a mintaérték a kiválasztott sablonhoz igazodik.
+ */
+const DEMO_CONNECTION: Partial<Record<TemplateId, string>> = {
+  investor: "Minta Gábor ajánlása",
+  hotelier: "ausztriai terjeszkedési tervei",
+};
+
+export function demoValuesFor(id: TemplateId): Values {
+  return { ...DEMO_VALUES, connection: DEMO_CONNECTION[id] ?? DEMO_VALUES.connection };
+}
 
 const recipient: Segment = { var: "recipientName", placeholder: "[Név]" };
 const sender: Segment = { var: "senderName", placeholder: "[Név]" };

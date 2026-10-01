@@ -55,10 +55,10 @@ describe("belső route-gate", () => {
   });
 
   it("publikus kód nem importál belső modult", () => {
-    const publicDirs = ["src/app/(public)", "src/features/home", "src/features/sale", "src/components", "src/content"];
+    const publicDirs = ["src/app/(public)", "src/app/layout.tsx", "src/app/not-found.tsx", "src/features/home", "src/features/sale", "src/components", "src/content"];
     const forbidden = /from\s+["'](@\/content\/internal|@\/features\/email|\.\.?\/.*internal)/;
     const offenders = publicDirs
-      .flatMap((d) => walk(join(ROOT, d)))
+      .flatMap((d) => (statSync(join(ROOT, d)).isDirectory() ? walk(join(ROOT, d)) : [join(ROOT, d)]))
       .filter((f) => /\.(ts|tsx)$/.test(f) && !f.includes("/content/internal/"))
       .filter((f) => forbidden.test(readFileSync(f, "utf8")))
       .map((f) => relative(ROOT, f));

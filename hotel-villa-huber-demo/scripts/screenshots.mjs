@@ -28,6 +28,7 @@ for (const vp of viewports) {
     }
     await page.evaluate(() => document.querySelectorAll('img[loading="lazy"]').forEach((img) => (img.loading = "eager")));
     await page.waitForFunction(() => Array.from(document.images).every((img) => img.complete && img.naturalWidth > 0), null, { timeout: 30000 }).catch(() => {});
+    await page.evaluate(() => window.scrollTo(0, 0));
     await page.waitForTimeout(300);
     const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
     const file = `${outDir}/${t.name}-${vp.name}.png`;
