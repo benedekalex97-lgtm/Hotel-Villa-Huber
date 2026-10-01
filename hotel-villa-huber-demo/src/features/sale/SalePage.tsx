@@ -296,9 +296,9 @@ export function SalePage({ deliveryMode }: { deliveryMode: DeliveryMode }) {
             id="sale-operations-title"
             eyebrow="Működés"
             title="Működés és üzemeltetési háttér"
-            lead="Amit a működésről jelenleg tudunk, és amit még tisztázni kell."
+            lead="A működésről jelenleg rendelkezésre álló információk."
           />
-          <div className={styles.twoCol}>
+          <div>
             <div className={styles.group}>
               <h3>Amit jelenleg tudunk</h3>
               <dl className={styles.factList}>
@@ -306,14 +306,6 @@ export function SalePage({ deliveryMode }: { deliveryMode: DeliveryMode }) {
                   <FactRow key={id} id={id} />
                 ))}
               </dl>
-            </div>
-            <div className={styles.group}>
-              <h3>Tisztázandó</h3>
-              <ul className={styles.clarify}>
-                {OPERATIONS.toClarify.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
             </div>
           </div>
           <aside className={styles.direction} aria-labelledby="sale-direction-title">
