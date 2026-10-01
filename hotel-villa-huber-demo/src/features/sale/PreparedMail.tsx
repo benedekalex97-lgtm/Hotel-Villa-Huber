@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { trackMeasurement } from "@/features/measurement/events";
 import { CONTACT } from "@/content/site";
 import { inquiryPlainText, type InquiryMailto } from "@/features/inquiry/schema";
 import { copyPlainText } from "@/lib/clipboard";
@@ -18,6 +19,7 @@ export function PreparedMail({ mail, reopenLabel }: { mail: InquiryMailto; reope
 
   async function copyText(text: string, label: string) {
     const ok = await copyPlainText(text);
+    if (ok) trackMeasurement("inquiry_copy");
     setCopy(
       ok
         ? { kind: "ok", text: `${label} a vágólapra másolva.` }
@@ -53,7 +55,7 @@ export function PreparedMail({ mail, reopenLabel }: { mail: InquiryMailto; reope
         value={plainText}
         onFocus={(event) => event.currentTarget.select()}
       />
-      <a className={styles.reopen} href={mail.href}>
+      <a className={styles.reopen} href={mail.href} onClick={() => trackMeasurement("inquiry_mailto_open")}>
         {reopenLabel}
       </a>
     </div>

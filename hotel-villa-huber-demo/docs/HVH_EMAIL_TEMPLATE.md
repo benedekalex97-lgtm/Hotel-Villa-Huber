@@ -111,7 +111,7 @@ A horgony a landing kódjából való: `SalePage.tsx` — `<section id={SALE_SEC
 | D | Környék (`kornyek`) | „Környék és elhelyezkedés” | Gegendtal, Afritzi-tó és Brennsee, Villach régió, téli hegyek; tó-távolság a forrásolt jelöléssel; menetidő nincs |
 | E | Működés (`mukodes`) | „Működés és üzemeltetési háttér” | 2026-os tulajdonosi közlés, értékelés, üzemeltető-státusz (állapottal); „Lehetséges irány, nem ígéret”. A landingről a tulajdonosi adatbekérési („Tisztázandó”) lista kikerült, ezért az emailben sincs; az átadás időzítése a H, a nyitvatartás/foglalhatóság tisztázása a J (GYIK) szekcióban szerepel |
 | F | Kinek lehet érdekes? (`kinek`) | „Kinek lehet érdekes?” | a négy célcsoport indoklással és fő kérdéssel |
-| G | Két vásárlási út (`vasarlasi-utak`) | „Két vásárlási út” | saját üzemeltetés; szakmai üzemeltető bevonása — „jelenlegi állapot”: partnerkeresés előkészítés alatt, leszerződött üzemeltető nincs |
+| G | Vásárlási szempontok (`vasarlasi-utak`) | „Vásárlási szempontok” | Az ingatlan megvásárlása, az átadás és az előkészítendő adatok egyeztetése. Külső üzemeltető bevonását nem kínáljuk. |
 | H | Feltételek (`feltetelek`) | „Értékesítési feltételek” | „Irányár és értékesítési feltételek egyeztetés alapján.”; az értékesítés tárgya, tranzakciós forma, időzítés |
 | I | Dokumentumok és megtekintés (`dokumentumok`) | „Dokumentumok és megtekintés” | négy dokumentumtéma, bizalmassági feltételek, helyszíni megtekintés; letölthető anyag/adatszoba nincs |
 | J | Gyakori kérdések (`gyik`) | „Gyakori kérdések” | mind a 7 kérdés és válasz nyitott szövegként |
@@ -123,7 +123,7 @@ A megfeleltetés teljességét a `tests/unit/email-presentation.test.ts` ellenő
 ## Tényekre vonatkozó szabályok (érvényesítve)
 
 - A 14 szoba, kb. 45 vendég, kb. 50 fős étterem, kb. 35 személyautó és egy busz csak a regiszter szerinti értékkel és „Korábbi nyilvános közlés — tulajdonosi megerősítésre vár” állapottal szerepel; a busz férőhelyét nem értelmezzük újra.
-- Az irányár szövege kizárólag a központi; a korábbi 1,2 millió EUR nem jelenik meg (teszt: nincs ár, összeg, hozam, megtérülés, terület, építési év a HTML-ben és a TXT-ben).
+- Az irányár szövege kizárólag a központi; korábbi vagy nem jóváhagyott ár nem jelenik meg (teszt: nincs ár, összeg, hozam, megtérülés, terület, építési év a HTML-ben és a TXT-ben).
 - Nincs saját szolgáltatási díj, sikerdíj vagy belső megjegyzés; a foglalási demó mintaadatai nincsenek benne.
 - A levél nem állít előzetes beszélgetést, ajánlást vagy korábbi érdeklődést; nem használja a régi „Érdekes lehet Önnek?” logikát.
 
@@ -159,15 +159,3 @@ Ez nem emailkliens-teszt. Küldés előtt ajánlott egy kézi próba saját Gmai
 - A kapacitás- és szolgáltatásadatok mind megerősítésre várnak (tulajdonosi közlés/dokumentum hiányzik); ár, méret, építési év, műszaki és jogi háttér egyeztetés tárgya.
 - A kézi szerkesztés a levélben szabad szöveg: a tiltott-tartalom ellenőrzés mintaalapú, nem helyettesíti az emberi átolvasást.
 - Kézzel hozzáadott képek nincsenek; a pendrive-os média feldolgozása még hátra van.
-
-## Archívum — a három korábbi sablon (nem aktív)
-
-A következő szövegek archiváltak, a szerkesztőben nem elérhetők; csak dokumentációként maradnak (forrás: „Megkereső emailek” v1.1, `SRC-EMAILEK-V1.1`). A korábbi 1,2 millió EUR nem jóváhagyott aktuális ár.
-
-**Befektető** — tárgy: „Hotel Villa Huber – ausztriai szállodai befektetési lehetőség”; törzs: „Tisztelt [Név]! [Ajánló neve / korábbi beszélgetésünk / konkrét üzleti kapcsolódás] alapján keresem a karintiai Hotel Villa Huber értékesítésével kapcsolatban. A lehetőség olyan befektető számára lehet érdekes, aki ausztriai szállodai ingatlan vásárlásában gondolkodik, és a működtetést szakmai üzemeltetővel képzeli el. Az üzemeltető bevonása külön előkészítendő feladat. Érdekes lehet Önnek ez a befektetési irány? Ha igen, elküldöm a rövid bemutatót, majd egy 15 perces beszélgetésben egyeztethetjük az elképzeléseit. Üdvözlettel: [Név] [Telefonszám]” (kapcsolati email nélkül; a korábbi mentés hozzáadott aláírása nem számít jóváhagyásnak).
-
-**Szállodás** — tárgy: „Hotel Villa Huber – vásárlási lehetőség saját üzemeltetésre”; törzs: „Tisztelt [Név]! A [cégnév] [konkrét, ellenőrzött szakmai kapcsolódása] miatt keresem a karintiai Hotel Villa Huber értékesítésével kapcsolatban. A szállodát olyan szakmai vevőnek szeretnénk bemutatni, aki saját üzemeltetésű ausztriai egység vásárlását mérlegeli. Az első egyeztetésen azt tisztáznánk, hogy a ház mérete, elhelyezkedése és működési háttere illeszkedhet-e az Önök terveihez. Napirenden van Önöknél hasonló vásárlás? Ha igen, szívesen elküldöm a rövid bemutatót, és egyeztetek egy 15 perces telefonbeszélgetést. Üdvözlettel: [Név] [Telefonszám] sale@hotelvillahuber.com”.
-
-**Utánkövetés** — tárgy: „Hotel Villa Huber – korábbi megkeresésem”; törzs: „Tisztelt [Név]! A Hotel Villa Huberrel kapcsolatos korábbi levelemre szeretnék röviden visszatérni. Aktuális lehet Önnek egy karintiai szállodai ingatlan vásárlásának megvizsgálása? Ha igen, elküldöm a rövid bemutatót, vagy egyeztethetünk egy rövid beszélgetést. Ha jelenleg nem aktuális, egy rövid visszajelzés is elegendő. Ha a cégnél más foglalkozik ilyen vásárlásokkal, köszönöm, ha megjelöli az illetékes kollégát. Üdvözlettel: [Név] [Telefonszám] sale@hotelvillahuber.com”.
-
-Ezek a régi „betű szerinti megőrzés” és „három sablon közti választás” szabályai szerint készültek; az új feladat ezeket felülírja.

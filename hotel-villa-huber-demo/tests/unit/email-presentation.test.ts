@@ -111,7 +111,7 @@ describe("bemutató email — A–L megfeleltetés", () => {
     expect(all).not.toMatch(/\bperc\b.*(autó|sípálya)|ski-?in|ski-?out|lift/);
   });
 
-  it("E) 2026-os működés, üzemeltető, lehetséges irány (a landinggel azonos tartalom)", () => {
+  it("E) 2026-os működés és lehetséges irány (a landinggel azonos tartalom)", () => {
     OPERATIONS.knownFactIds.forEach((id) => {
       const view = publicFactView(id);
       has(view.value);
@@ -122,7 +122,7 @@ describe("bemutató email — A–L megfeleltetés", () => {
     has(POSSIBLE_DIRECTIONS.text);
     has("Lehetséges irány, nem ígéret");
     has("A tulajdonos tájékoztatása szerint a hotel 2026 nyarán működött.");
-    has("Leszerződött üzemeltető jelenleg nincs");
+    expect(all).not.toContain("szakmai üzemeltető");
   });
 
   it("F) a négy célcsoport szempontjaikkal", () => {
@@ -134,15 +134,15 @@ describe("bemutató email — A–L megfeleltetés", () => {
     });
   });
 
-  it("G) két vásárlási út; az üzemeltetői út külön előkészítendő, szerződött üzemeltető nincs", () => {
-    expect(PURCHASE_PATHS).toHaveLength(2);
+  it("G) vásárlási szempontok, külső üzemeltető ajánlása nélkül", () => {
+    expect(PURCHASE_PATHS).toHaveLength(1);
     PURCHASE_PATHS.forEach((p) => {
       has(p.title);
       has(p.forWhom);
       p.topics.forEach(has);
       has(p.status);
     });
-    has("leszerződött üzemeltető jelenleg nincs");
+    expect(all).not.toContain("szakmai üzemeltető");
   });
 
   it("H) irányárszöveg változatlanul, a feltételek és az értékesítés tárgya", () => {

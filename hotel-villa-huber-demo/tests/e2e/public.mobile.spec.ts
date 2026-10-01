@@ -12,11 +12,11 @@ test("mobil: menü nyit/zár, nincs vízszintes túlcsordulás", async ({ page }
   await toggle.click();
   await expect(toggle).toHaveAttribute("aria-expanded", "true");
   const mobileNav = page.getByRole("navigation", { name: "Fő navigáció (mobil)" });
-  await expect(mobileNav.getByRole("link", { name: "Eladó hotel" })).toBeVisible();
+  await expect(mobileNav.getByRole("link", { name: "Tulajdonos lennél?" })).toBeVisible();
   await page.keyboard.press("Escape");
   await expect(mobileNav).toBeHidden();
   await expect(toggle).toBeFocused();
   await toggle.click();
-  await mobileNav.getByRole("link", { name: "Eladó hotel" }).click();
+  await mobileNav.getByRole("link", { name: "Tulajdonos lennél?" }).click();
   await expect(page).toHaveURL(/\/elado-hotel\/?$/);
 });

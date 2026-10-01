@@ -11,13 +11,13 @@ const CTA_LABEL = "Részletes bemutatót és egyeztetést kérek";
 const PRICE_LINE = "Irányár és értékesítési feltételek egyeztetés alapján.";
 
 const HEADINGS_IN_ORDER = [
-  "Hotel Villa Huber — vásárlási lehetőség Karintiában.",
+  "Tulajdonos lennél?",
   "Ingatlanadatok",
   "A ház és terei",
   "Környék és elhelyezkedés",
   "Működés és üzemeltetési háttér",
   "Kinek lehet érdekes?",
-  "Két vásárlási út",
+  "Vásárlási szempontok",
   "Értékesítési feltételek",
   "Dokumentumok és megtekintés",
   "Gyakori kérdések",

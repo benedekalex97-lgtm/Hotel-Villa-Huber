@@ -659,3 +659,5 @@
     top: calc(var(--hvh-header-h) + 1.5rem);
   }
 }
+
+.purchaseCard { list-style:none; padding:0; margin:0; }

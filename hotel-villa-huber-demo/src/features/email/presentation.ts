@@ -285,9 +285,9 @@ export function buildDocument(input: BuildInput): BuildResult {
     },
   ]);
 
-  // — G) Két vásárlási út —
-  const sectionG = section("G", SALE_SECTIONS.paths, "Vásárlási utak", "Két vásárlási út", () => [
-    lead("G", "Saját üzemeltetés vagy szakmai üzemeltető bevonása."),
+  // — G) Vásárlási szempontok —
+  const sectionG = section("G", SALE_SECTIONS.paths, "Vásárlás", "Vásárlási szempontok", () => [
+    lead("G", "Az ingatlanról és az átadás feltételeiről szóló egyeztetés."),
     {
       kind: "cards",
       items: PURCHASE_PATHS.map((path) => ({

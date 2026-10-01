@@ -36,7 +36,7 @@ const SECTION_INDEX: readonly { id: string; label: string }[] = [
   { id: SALE_SECTIONS.area, label: "Környék" },
   { id: SALE_SECTIONS.operations, label: "Működés" },
   { id: SALE_SECTIONS.audience, label: "Kinek lehet érdekes?" },
-  { id: SALE_SECTIONS.paths, label: "Vásárlási utak" },
+  { id: SALE_SECTIONS.paths, label: "Vásárlási szempontok" },
   { id: SALE_SECTIONS.terms, label: "Feltételek" },
   { id: SALE_SECTIONS.documents, label: "Dokumentumok" },
   { id: SALE_SECTIONS.faq, label: "Gyakori kérdések" },
@@ -344,11 +344,11 @@ export function SalePage({ deliveryMode }: { deliveryMode: DeliveryMode }) {
         <div className="hvh-container">
           <SectionHead
             id="sale-paths-title"
-            eyebrow="Vásárlási utak"
-            title="Két vásárlási út"
-            lead="Saját üzemeltetés vagy szakmai üzemeltető bevonása."
+            eyebrow="Vásárlás"
+            title="Vásárlási szempontok"
+            lead="Az ingatlanról és az átadás feltételeiről szóló egyeztetés."
           />
-          <ul className={`${styles.cards} ${styles.cards2}`}>
+          <ul className={styles.purchaseCard}>
             {PURCHASE_PATHS.map((path) => (
               <li key={path.id} className={styles.pathCard}>
                 <h3>{path.title}</h3>
@@ -361,7 +361,7 @@ export function SalePage({ deliveryMode }: { deliveryMode: DeliveryMode }) {
                     ))}
                   </ul>
                 </div>
-                <p className={`hvh-notice ${path.id === "with-operator" ? "hvh-notice--warning" : ""}`}>
+                <p className="hvh-notice">
                   <strong>Jelenlegi állapot</strong>
                   <span>{path.status}</span>
                 </p>

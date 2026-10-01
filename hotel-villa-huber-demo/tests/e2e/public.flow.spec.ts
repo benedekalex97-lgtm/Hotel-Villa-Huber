@@ -7,10 +7,10 @@ test("főoldal: vendégnavigáció, szekciók és átvezetés az eladási oldalr
     await expect(page.locator(`#${id}`)).toHaveCount(1);
   }
   const nav = page.getByRole("navigation", { name: "Fő navigáció" }).first();
-  for (const label of ["A hotel", "Szobák", "Élmények és szolgáltatások", "Galéria", "Környék", "Foglalás", "Eladó hotel", "Kapcsolat"]) {
+  for (const label of ["A hotel", "Szobák", "Élmények és szolgáltatások", "Galéria", "Környék", "Foglalás", "Tulajdonos lennél?", "Kapcsolat"]) {
     await expect(nav.getByRole("link", { name: label, exact: true })).toBeVisible();
   }
-  await page.locator("#elado-hotel").getByRole("link", { name: "Az eladási tájékoztató megnyitása" }).click();
+  await page.locator("#elado-hotel").getByRole("link", { name: "A vásárlási lehetőség megismerése" }).click();
   await expect(page).toHaveURL(/\/elado-hotel\/?$/);
 });
 

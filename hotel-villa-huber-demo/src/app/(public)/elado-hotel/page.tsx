@@ -4,7 +4,7 @@ import { PROPERTY } from "@/content/property";
 import { deliveryMode } from "@/features/inquiry/delivery";
 
 export const metadata: Metadata = {
-  title: "Eladó hotel",
+  title: "Tulajdonos lennél?",
   description: `${PROPERTY.name} — vásárlási lehetőség Karintiában, magyar befektetőknek és szállodás vállalkozásoknak.`,
 };
 

@@ -1,4 +1,5 @@
 import { SiteHeader } from "@/components/layout/SiteHeader";
+import { MeasurementControls } from "@/features/measurement/MeasurementControls";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 
 export default function PublicLayout({ children }: { children: React.ReactNode }) {
@@ -9,6 +10,7 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
         {children}
       </main>
       <SiteFooter />
+      <MeasurementControls gaId={process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID ?? ""} pixelId={process.env.NEXT_PUBLIC_META_PIXEL_ID ?? ""} />
     </>
   );
 }

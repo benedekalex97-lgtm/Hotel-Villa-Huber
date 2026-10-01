@@ -1,0 +1,7 @@
+.panel { position:fixed; z-index:80; bottom:1rem; left:1rem; right:1rem; max-width:54rem; margin:auto; padding:1.4rem; background:var(--paper,#f6f1e7); color:#1e221f; border:1px solid #d8cdb9; box-shadow:0 6px 32px #0003; max-height:75dvh; overflow:auto; }
+.panel h2 { font-size:1.5rem; margin:0 0 .5rem; }
+.panel p { font-size:.95rem; }
+.panel label { display:block; margin:.5rem 0; }
+.actions { display:flex; flex-wrap:wrap; gap:.6rem; margin-top:1rem; }
+.actions button,.reopen { border:1px solid #2c4636; background:#f6f1e7; color:#2c4636; padding:.65rem .9rem; cursor:pointer; font:inherit; }
+.reopen { display:block; margin:1rem auto; font-size:.9rem; }

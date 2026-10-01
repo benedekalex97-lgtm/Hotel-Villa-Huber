@@ -16,6 +16,7 @@ import {
   type InquiryInput,
   type InquiryMailto,
 } from "@/features/inquiry/schema";
+import { trackMeasurement } from "@/features/measurement/events";
 import { PreparedMail } from "./PreparedMail";
 import styles from "./InquiryForm.module.css";
 
@@ -42,6 +43,7 @@ export function InquiryForm({ deliveryMode }: { deliveryMode: DeliveryMode }) {
   const [notice, setNotice] = useState<ErrorNotice>(null);
   const [prepared, setPrepared] = useState<InquiryMailto | null>(null);
   const startedAt = useRef(0);
+  const measurementStarted = useRef(false);
   const successRef = useRef<HTMLDivElement>(null);
 
   // Az űrlap megjelenésének ideje — a szerver ebből szűri a túl gyors, automatikus beküldést.
@@ -60,6 +62,7 @@ export function InquiryForm({ deliveryMode }: { deliveryMode: DeliveryMode }) {
 
   function update(field: InquiryField) {
     return (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      if (!measurementStarted.current) { trackMeasurement("form_start"); measurementStarted.current = true; }
       const value = event.target.value;
       setValues((current) => ({ ...current, [field]: value }));
       setServerErrors((current) => {
@@ -93,6 +96,7 @@ export function InquiryForm({ deliveryMode }: { deliveryMode: DeliveryMode }) {
       // Nincs szerveres küldés: a levelezőalkalmazás nyílik meg, a levelet a látogató küldi el.
       const mail = buildInquiryMailto(values);
       setPrepared(mail);
+      trackMeasurement("inquiry_mailto_open");
       window.location.href = mail.href;
       return;
     }
@@ -101,6 +105,7 @@ export function InquiryForm({ deliveryMode }: { deliveryMode: DeliveryMode }) {
     const result = await submitInquiry(values, { startedAt: startedAt.current, website });
     switch (result.status) {
       case "accepted":
+        trackMeasurement("generate_lead");
         setPhase("accepted");
         return;
       case "invalid":

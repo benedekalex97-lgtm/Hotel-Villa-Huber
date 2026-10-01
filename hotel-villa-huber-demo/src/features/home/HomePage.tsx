@@ -224,11 +224,11 @@ export function HomePage() {
       <section id={HOME_SECTIONS.sale} className={styles.saleBand} aria-labelledby="elado-title">
         <div className={`hvh-container ${styles.saleInner}`}>
           <div className={styles.saleText}>
-            <h2 id="elado-title">A hotel eladó</h2>
-            <p>A Hotel Villa Huber ingatlan jelenleg eladó. Az értékesítéssel kapcsolatos tudnivalók az eladási tájékoztatóban olvashatók.</p>
+            <h2 id="elado-title">Tulajdonos lennél?</h2>
+            <p>Ismerje meg a Hotel Villa Huber megvásárlásának lehetőségét, az ingatlant és a következő egyeztetés témáit.</p>
           </div>
           <Link href={ROUTES.sale} className="hvh-btn hvh-btn--secondary">
-            Az eladási tájékoztató megnyitása
+            A vásárlási lehetőség megismerése
           </Link>
         </div>
       </section>

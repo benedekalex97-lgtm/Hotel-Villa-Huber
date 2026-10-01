@@ -48,7 +48,7 @@ export const MAIN_NAV: readonly NavItem[] = [
   { label: "Galéria", href: `${ROUTES.home}#${HOME_SECTIONS.gallery}` },
   { label: "Környék", href: `${ROUTES.home}#${HOME_SECTIONS.area}` },
   { label: "Foglalás", href: ROUTES.booking },
-  { label: "Eladó hotel", href: ROUTES.sale },
+  { label: "Tulajdonos lennél?", href: ROUTES.sale },
   { label: "Kapcsolat", href: `${ROUTES.home}#${HOME_SECTIONS.contact}` },
 ];
 

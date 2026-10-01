@@ -21,8 +21,8 @@ export const AUDIENCES: readonly Audience[] = [
   {
     id: "private-wealth",
     title: "Vállalkozói magánvagyon, családi befektetők",
-    why: "Ausztriai ingatlantulajdon, szakmai üzemeltető bevonásával.",
-    question: "Ki működteti, milyen költségekkel és eredménnyel?",
+    why: "Ausztriai szállodai ingatlan megvásárlása és tulajdonlása.",
+    question: "Milyen adatok és feltételek alapján mérlegelhető a vásárlás?",
     reachInternal: "Személyes ajánlások, üzleti és vagyonkezelői kapcsolatok.",
     source: "SRC-CELCSOPORT-V1",
   },
@@ -53,7 +53,7 @@ export const AUDIENCES: readonly Audience[] = [
 ];
 
 export interface PurchasePath {
-  id: "own-operation" | "with-operator";
+  id: "property-purchase";
   title: string;
   forWhom: string;
   /** Mit tekintünk át az egyeztetés során. */
@@ -65,19 +65,11 @@ export interface PurchasePath {
 
 export const PURCHASE_PATHS: readonly PurchasePath[] = [
   {
-    id: "own-operation",
-    title: "Vásárlás saját üzemeltetéssel",
-    forWhom: "Hotelcsoportoknak, szállodatulajdonosoknak és turisztikai vállalkozóknak, akik maguk működtetnék a házat.",
+    id: "property-purchase",
+    title: "Az ingatlan megvásárlása",
+    forWhom: "Magánszemélyeknek és vállalkozásoknak, akik tulajdonosként vizsgálják a Hotel Villa Huber lehetőségét.",
     topics: ["az ingatlan és terei", "a működési előzmények", "a kapacitás és az állapot", "az átvehető eszközök"],
     status: "Az ehhez szükséges adatokat és dokumentumokat a tulajdonossal közösen készítjük elő.",
-    source: "SRC-STRATEGIA-V1",
-  },
-  {
-    id: "with-operator",
-    title: "Vásárlás szakmai partner bevonásával",
-    forWhom: "Vállalkozói magánvagyonnak és családi befektetőknek, akik a működtetést szakmai üzemeltetőre bíznák.",
-    topics: ["az ingatlan és terei", "a lehetséges üzemeltetői modell", "a szóba jöhető partnerjelöltek"],
-    status: "Lehetséges modell. Az üzemeltetői partnerkeresés még előkészítés alatt áll; leszerződött üzemeltető jelenleg nincs.",
     source: "SRC-STRATEGIA-V1",
   },
 ];
@@ -87,7 +79,7 @@ export const FIRST_CALL_TOPICS: readonly { title: string; detail: string }[] = [
   { title: "Vásárlási szándék", detail: "Milyen célból vizsgálja a lehetőséget, és milyen típusú szálláshelyet keres." },
   { title: "Finanszírozás", detail: "Milyen forrásból és szerkezetben képzeli el a vásárlást." },
   { title: "Időzítés", detail: "Mikor szeretne döntést hozni, és milyen lépésekre van szüksége addig." },
-  { title: "Üzemeltetési elképzelés", detail: "Saját működtetésben vagy szakmai partnerrel gondolkodik." },
+  { title: "Vásárlási cél", detail: "Hogyan illeszkedik az ingatlan az Ön terveihez." },
 ];
 
 /** Következő lépések a nyilvános oldalon (a stratégia első három lépésének vevőoldali változata). */
@@ -100,7 +92,7 @@ export const NEXT_STEPS: readonly { title: string; detail: string }[] = [
 /** Ajánlatkérő: érdeklődési irány (kötelező). */
 export const INTEREST_OPTIONS = [
   { value: "sajat-uzemeltetes", label: "Saját üzemeltetés" },
-  { value: "szakmai-uzemelteto", label: "Szakmai üzemeltetővel" },
+  { value: "ingatlan-befektetes", label: "Ingatlanvásárlás, befektetés" },
   { value: "meg-vizsgalom", label: "Még vizsgálom" },
 ] as const;
 
@@ -119,12 +111,12 @@ export type RequestValue = (typeof REQUEST_OPTIONS)[number]["value"];
 export const SALE_CTA_LABEL = "Részletes bemutatót és egyeztetést kérek";
 
 export const SALE_SUMMARY = {
-  title: "Hotel Villa Huber — vásárlási lehetőség Karintiában.",
-  subtitle: "Magyar befektetőknek és szállodás vállalkozásoknak, saját üzemeltetésre vagy szakmai partner bevonásával.",
+  title: "Tulajdonos lennél?",
+  subtitle: "Hotel Villa Huber: vásárlási lehetőség Karintiában, magyar befektetőknek és szállodás vállalkozásoknak.",
   points: [
     "Karakteres, saroktornyos villa-hotel Afritz am See településen, a Gegendtal völgyben.",
     "Korábbi nyilvános közlések szerint 14 szoba és lakosztály, étterem, kávézó-bár, terasz és wellness.",
-    "Két vásárlási út: saját üzemeltetés vagy szakmai üzemeltető bevonása.",
+    "Részletes ingatlanbemutató és előre egyeztetett helyszíni megtekintés.",
     "Irányár és értékesítési feltételek egyeztetés alapján.",
   ],
 } as const;
@@ -146,7 +138,7 @@ export const OPEN_DATA_TOPICS: readonly { title: string; detail: string }[] = [
 
 /** Publikus működési háttér. A tulajdonosi adatbekérés külön belső modulban van. */
 export const OPERATIONS = {
-  knownFactIds: ["operated-summer-2026", "reviews", "operator"],
+  knownFactIds: ["operated-summer-2026", "reviews"],
 } as const;
 
 /** Lehetséges hasznosítási irány — nem igazolt üzleti vagy jogi lehetőség. */
@@ -181,7 +173,6 @@ export const VIEWING = {
 export const SALE_FAQ: readonly { q: string; a: string }[] = [
   { q: "Mennyi az irányár?", a: "Az irányárat és az értékesítési feltételeket egyeztetés alapján adjuk meg. Korábbi nyilvános hirdetésekben szereplő összegek nem jóváhagyott aktuális árak." },
   { q: "Működik jelenleg a hotel?", a: "A tulajdonos tájékoztatása szerint a hotel 2026 nyarán működött. A jelenlegi nyitvatartást és foglalhatóságot az egyeztetés során tisztázzuk." },
-  { q: "Van már üzemeltető, aki átvenné a működtetést?", a: "Nincs. A szakmai üzemeltető bevonása lehetséges vásárlási út; a partnerkeresés előkészítés alatt áll." },
   { q: "Ellenőrzött adatok a kapacitásszámok?", a: "Nem. A szobaszám, a férőhely, az étterem és a parkoló adatai korábbi nyilvános közlésekből származnak; a tulajdonossal dokumentum alapján erősítjük meg őket." },
   { q: "Milyen dokumentumokat láthatok?", a: "A következő egyeztetésen tisztázzuk, mely dokumentumok állnak rendelkezésre, és milyen bizalmassági feltételekkel ismerhetők meg. Letölthető anyag ezen az oldalon nincs." },
   { q: "Meg kell adnom a finanszírozási forrást az érdeklődéshez?", a: "Nem. Az első egyeztetésen beszélünk a vásárlási szándékról, finanszírozásról, időzítésről és üzemeltetési elképzelésről — vagyonadatot nem kérünk." },
